@@ -20,13 +20,6 @@ class Program {
     TextureHolder mTextureHolder;
     FontHolder mFontHolder;
 
-    // PlayerSettings mPlayerSettings1;
-    // PlayerSettings mPlayerSettings2;
-    // PowerUpSettings mPowerUpSettings1;
-    // PowerUpSettings mPowerUpSettings2;
-
-    // HighScore mHighScore;
-
     void saveSettings() const;
 
     void loadTextures();
