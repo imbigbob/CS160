@@ -1,7 +1,37 @@
+#ifndef DYNAMIC_ARRAY_HPP
+#define DYNAMIC_ARRAY_HPP
 
-#include "DynamicArray.hpp"
+template <typename T>
+class DynamicArray {
+   private:
+    T* data;
+    int size;
+    int capacity;
 
-#include <iostream>
+    void resize(int newCapacity);
+
+   public:
+    DynamicArray();
+    ~DynamicArray();
+    DynamicArray(const DynamicArray& other);
+    DynamicArray& operator=(const DynamicArray& other);
+    int getValue(int index) const;
+    void pushBack(const T& value);
+    void removeAt(int index);
+    T& operator[](int index);
+    const T& operator[](int index) const;
+    int getSize() const;
+    bool empty() const;
+};
+template <typename T>
+void DynamicArray<T>::pushBack(const T& value) {
+    if (size >= capacity) {
+        resize(capacity * 2);
+    }
+    data[size] = value;
+    size++;
+    return;
+}
 
 template <typename T>
 void DynamicArray<T>::resize(int newCapacity) {
@@ -52,14 +82,7 @@ DynamicArray<T>& DynamicArray<T>::operator=(const DynamicArray& other) {
     return *this;
 }
 
-template <typename T>
-void DynamicArray<T>::pushBack(const T& value) {
-    if (size >= capacity) {
-        resize(capacity * 2);
-    }
-    data[size] = value;
-    size++;
-}
+
 
 template <typename T>
 void DynamicArray<T>::removeAt(int index) {
@@ -83,12 +106,19 @@ const T& DynamicArray<T>::operator[](int index) const {
     // assert(index >= 0 && index < this->size);
     return data[index];
 }
-template <typename T>
-int DynamicArray<T>::getSize() const {
-    return size;
-}
 
 template <typename T>
 bool DynamicArray<T>::empty() const {
     return size == 0;
 }
+
+template <typename T>
+int DynamicArray<T>::getValue(int index) const {
+    return 0;
+}
+
+template <typename T>
+int DynamicArray<T>::getSize() const {
+    return size;
+}
+#endif
