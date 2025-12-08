@@ -43,19 +43,8 @@ void SpriteNode::flipHorizontally() {
     mSprite.setTextureRect(textureRect);
 }
 
-void SpriteNode::drawCurrent(sf::RenderTarget& target, sf::RenderStates states)
-    const {
+void SpriteNode::drawCurrent(
+    sf::RenderTarget& target, sf::RenderStates states
+) const {
     target.draw(mSprite, states);
-}
-
-void SpriteNode::saveCurrent(std::ofstream& fout) const {
-    SceneNode::saveCurrent(fout);
-    fout << mSprite.getTextureRect() << '\n';
-}
-
-void SpriteNode::loadCurrent(std::ifstream& fin) {
-    SceneNode::loadCurrent(fin);
-    sf::IntRect textureRect;
-    fin >> textureRect;
-    setTextureRect(textureRect);
 }

@@ -28,11 +28,9 @@ class SpriteNode : public SceneNode {
 
     void flipHorizontally();
 
-    void drawCurrent(sf::RenderTarget& target, sf::RenderStates states)
-        const override;
-
-    void saveCurrent(std::ofstream& fout) const override;
-    void loadCurrent(std::ifstream& fin) override;
+    void drawCurrent(
+        sf::RenderTarget& target, sf::RenderStates states
+    ) const override;
 };
 
 #endif

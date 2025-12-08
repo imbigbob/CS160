@@ -1,13 +1,16 @@
 #ifndef SCENE_NODE_HPP
 #define SCENE_NODE_HPP
 
+#include <SFML/Graphics/Drawable.hpp>
+#include <SFML/Graphics/Transformable.hpp>
+#include <SFML/System/NonCopyable.hpp>
+#include <SFML/System/Time.hpp>
+#include <SFML/Window/Event.hpp>
 #include <memory>
 #include <set>
 #include <vector>
 
-#include "../FileIO/FileIO.hpp"
 #include "../Identifier/Identifier.hpp"
-
 class Player;
 
 class SceneNode : public sf::Transformable,
@@ -21,8 +24,6 @@ class SceneNode : public sf::Transformable,
 
     void handleEvent(const sf::Event& event);
     void update(sf::Time deltaTime);
-    void save(std::ofstream& fout) const;
-    void load(std::ifstream& fin);
 
     SceneNode* getParent() const;
     virtual Textures::ID getTextureID() const;
@@ -31,9 +32,6 @@ class SceneNode : public sf::Transformable,
     sf::Transform getWorldTransform() const;
 
    protected:
-    virtual void saveCurrent(std::ofstream& fout) const;
-    virtual void loadCurrent(std::ifstream& fin);
-
    private:
     std::vector<Ptr> mChildren;
     SceneNode* mParent = nullptr;
@@ -45,12 +43,10 @@ class SceneNode : public sf::Transformable,
     void updateChildren(sf::Time deltaTime);
 
     virtual void draw(sf::RenderTarget& target, sf::RenderStates states) const;
-    virtual void drawCurrent(sf::RenderTarget& target, sf::RenderStates states)
-        const;
+    virtual void drawCurrent(
+        sf::RenderTarget& target, sf::RenderStates states
+    ) const;
     void drawChildren(sf::RenderTarget& target, sf::RenderStates states) const;
-
-    void saveChildren(std::ofstream& fout) const;
-    void loadChildren(std::ifstream& fin);
 };
 
 #endif
