@@ -1,12 +1,7 @@
 
 
-
-
-// #include "ExpenseManager/ExpenseManager.hpp"
-// #include "IncomeManager/IncomeManager.hpp"
-// #include "RecurringManager/RecurringManager.hpp"
-// #include "TransactionManager/TransactionManager.hpp"
-// #include "WalletManager/WalletManager.hpp"
+#ifndef DATA_STORAGE_HPP
+#define DATA_STORAGE_HPP
 #include <json/json.h>
 class DataStorage {
    public:
@@ -38,3 +33,5 @@ class DataStorage {
     DataStorage(const DataStorage&) = delete;  // Delete copy constructor
     DataStorage& operator=(const DataStorage&) = delete;
 };
+
+#endif  // DATA_STORAGE_HPP

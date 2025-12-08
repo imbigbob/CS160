@@ -1,10 +1,26 @@
 #pragma once
 #include <string>
 
-#include "Transaction.hpp"
+#include "../Transaction/Transaction.hpp"
+struct IncomeSource {
+    int id;
+    std::string name;
+};
+
 class Income : public Transaction {
+   private:
     int sourceId;
 
    public:
-    int getType() const override { return 1; }
+    Income() : Transaction(), sourceId(0) {}
+
+    Income(
+        int id, double amount, std::string date, int walletId,
+        std::string description, int source
+    )
+        : Transaction(id, amount, date, walletId, description),
+          sourceId(source) {}
+
+    int getType() const override { return 2; }
+    int getSourceId() const;
 };

@@ -1,7 +1,7 @@
 #include <string>
 
-#include "DynamicArray.hpp"
-#include "TransactionManager/TransactionManager.hpp"
+#include "core/DynamicArray/DynamicArray.hpp"
+#include "core/TransactionManager/TransactionManager.hpp"
 struct RecurringTransaction {
     int type;  // 1=Income, 2=Expense
     double amount;

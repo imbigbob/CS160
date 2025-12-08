@@ -1,6 +1,6 @@
 
 #pragma once
-#include "DynamicArray.hpp"
+#include "core/DynamicArray/DynamicArray.hpp"
 #include "model/Expense/Expense.hpp"
 #include "model/Income/Income.hpp"
 #include "model/Wallet/Wallet.hpp"
@@ -11,6 +11,7 @@ class TransactionManager {
     int nextId;
 
    public:
+    TransactionManager();
     void addIncome(const Income& inc);
     void addExpense(const Expense& exp);
 

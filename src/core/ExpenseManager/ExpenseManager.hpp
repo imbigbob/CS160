@@ -5,11 +5,12 @@
 class ExpenseManager {
    private:
     DynamicArray<Expense> list;
-    
+
    public:
+    ExpenseManager() : list() {}
     void add(const Expense& w);
     void remove(int id);
-    
+
     double getTotalBalance();
     int getAll();
 };
