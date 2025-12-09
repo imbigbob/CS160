@@ -5,7 +5,7 @@ namespace States {
 enum class ID {
     Menu,
     Transaction,
-    RecurringTransactions,
+    RecurringTransaction,
     Statistics,
 
     None,
