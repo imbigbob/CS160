@@ -5,10 +5,20 @@
 #include <fstream>
 void IncomeManager::add(const Income& w) {
     list.pushBack(w);
+    updateDB();
     return;
 }
 
-void IncomeManager::remove(int id) {}
+void IncomeManager::remove(int id) {
+    for (int i = 0; i < list.getSize(); i++) {
+        if (list[i].getSourceId() == id) {
+            list.removeAt(i);
+            updateDB();
+            return;
+        }
+    }
+    return;
+}
 
 Income* IncomeManager::findById(int id) {
     // for (int i = 0; i < list.getSize(); i++) {
@@ -45,7 +55,7 @@ void IncomeManager::updateDB() {
         root.append(obj);
     }
     // Write to file
-    std::ofstream file("incomes.json");
+    std::ofstream file("data/incomes.json");
     if (!file) {
         throw std::runtime_error("Error opening incomes.json for writing");
     }

@@ -1,0 +1,18 @@
+[
+  {
+    "amount": 5000.0,
+    "date": "2024-06-15",
+    "description": "Salary for June",
+    "id": 101,
+    "sourceId": 101,
+    "walletId": 1
+  },
+  {
+    "amount": 200.0,
+    "date": "2024-06-20",
+    "description": "Freelance Project",
+    "id": 102,
+    "sourceId": 102,
+    "walletId": 1
+  }
+]

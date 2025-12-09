@@ -6,6 +6,9 @@ class IncomeManager {
    private:
     DynamicArray<Income> list;
 
+   private:
+    void updateDB();
+
    public:
     IncomeManager() : list() {}
     void add(const Income& w);
@@ -13,6 +16,5 @@ class IncomeManager {
     Income* findById(int id);
     double getTotalBalance();
     DynamicArray<Income>& getAll();
-    void updateDB();
 };
 #endif
