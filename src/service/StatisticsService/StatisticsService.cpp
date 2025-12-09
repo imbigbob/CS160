@@ -12,18 +12,18 @@ double StatisticsService::totalExpenseInRange(
 }
 
 double StatisticsService::walletBasedIncome(
-    TransactionManager& tm, int walletId, ...
+    TransactionManager& tm, int walletId
 ) {
     return 0;
 }
 
 double StatisticsService::walletBasedExpense(
-    TransactionManager& tm, int walletId, ...
+    TransactionManager& tm, int walletId
 ) {
     return 0;
 }
 
-void StatisticsService::yearSummary(TransactionManager& tm, int year, ...) {
+void StatisticsService::yearSummary(TransactionManager& tm, int year) {
     return;
 }
 

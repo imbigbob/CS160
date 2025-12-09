@@ -1,12 +1,12 @@
-#ifndef MENU_STATE_HPP
-#define MENU_STATE_HPP
+#ifndef TRANSACTION_STATE_HPP
+#define TRANSACTION_STATE_HPP
 
 #include "../GUI/Container/Container.hpp"
 #include "../State.hpp"
 
-class MenuState : public State {
+class TransactionState : public State {
    public:
-    MenuState(StateStack& stack, Context context);
+    TransactionState(StateStack& stack, Context context);
 
     bool handleEvent(const sf::Event& event) override;
     bool update(sf::Time deltaTime) override;

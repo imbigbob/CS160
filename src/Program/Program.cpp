@@ -2,12 +2,13 @@
 
 #include "../Global/Global.hpp"
 #include "../State/MenuState/MenuState.hpp"
-#include "../State/SettingsState/SettingsState.hpp"
-#include "../State/TitleState/TitleState.hpp"
+// #include "../State/RecurringTransactionsState/RecurringTransactionsState.hpp"
+#include "../State/StatisticsState/StatisticsState.hpp"
+#include "../State/TransactionState/TransactionState.hpp"
 Program::Program()
     : mWindow(
           sf::VideoMode(Global::WINDOW_WIDTH, Global::WINDOW_HEIGHT),
-          "Crossy Road", sf::Style::Close
+          "Financial Wallet", sf::Style::Close
       ),
 
       mStateStack(State::Context(mWindow, mTextureHolder, mFontHolder)) {
@@ -15,13 +16,12 @@ Program::Program()
 
     loadTextures();
     loadFonts();
-    loadSettings();
 
     registerStates();
-    mStateStack.pushState(States::ID::Title);
+    mStateStack.pushState(States::ID::Menu);
 }
 
-Program::~Program() { saveSettings(); }
+Program::~Program() {}
 
 void Program::run() {
     sf::Clock clock;
@@ -46,82 +46,12 @@ void Program::run() {
     }
 }
 
-void Program::saveSettings() const {
-    std::ofstream fout("data/Settings.txt");
-
-    fout.close();
-}
-
 void Program::loadTextures() {
-    mTextureHolder.load(
-        Textures::ID::PlayerChoice1, "assets/Textures/BlackNinja.png"
-    );
-    mTextureHolder.load(
-        Textures::ID::PlayerChoice2, "assets/Textures/BlueNinja.png"
-    );
-    mTextureHolder.load(
-        Textures::ID::PlayerChoice3, "assets/Textures/GrayNinja.png"
-    );
-    mTextureHolder.load(
-        Textures::ID::PlayerChoice4, "assets/Textures/GreenNinja.png"
-    );
-    mTextureHolder.load(
-        Textures::ID::PlayerChoice5, "assets/Textures/RedNinja.png"
-    );
-    mTextureHolder.load(
-        Textures::ID::PlayerChoice6, "assets/Textures/YellowNinja.png"
-    );
-    mTextureHolder.load(Textures::ID::Halo, "assets/Textures/Halo.png");
-
     mTextureHolder.load(
         Textures::ID::TitleBackground, "assets/Textures/TitleBackground.png"
     );
     mTextureHolder.load(
         Textures::ID::MenuBackground, "assets/Textures/MenuBackground.png"
-    );
-
-    mTextureHolder.load(
-        Textures::ID::SettingBackground, "assets/Textures/SettingBackground.png"
-    );
-    mTextureHolder.load(Textures::ID::Frame, "assets/Textures/Frame.png");
-
-    mTextureHolder.load(Textures::ID::Bus, "assets/Textures/Bus.png");
-    mTextureHolder.load(Textures::ID::Car, "assets/Textures/Car.png");
-    mTextureHolder.load(
-        Textures::ID::PoliceCar, "assets/Textures/PoliceCar.png"
-    );
-    mTextureHolder.load(Textures::ID::Train, "assets/Textures/Train.png");
-    mTextureHolder.load(Textures::ID::Van, "assets/Textures/Van.png");
-
-    mTextureHolder.load(Textures::ID::Cat, "assets/Textures/Cat.png");
-    mTextureHolder.load(Textures::ID::Cow, "assets/Textures/Cow.png");
-    mTextureHolder.load(Textures::ID::Dog, "assets/Textures/Dog.png");
-    mTextureHolder.load(Textures::ID::Horse, "assets/Textures/Horse.png");
-    mTextureHolder.load(Textures::ID::Lion, "assets/Textures/Lion.png");
-
-    mTextureHolder.load(Textures::ID::Rock, "assets/Textures/Rock.png");
-    mTextureHolder.load(Textures::ID::Tree, "assets/Textures/Tree.png");
-
-    mTextureHolder.load(Textures::ID::Log, "assets/Textures/Log.png");
-
-    mTextureHolder.load(
-        Textures::ID::RailwaySignal, "assets/Textures/RailwaySignal.png"
-    );
-    mTextureHolder.load(
-        Textures::ID::TrafficLight, "assets/Textures/TrafficLight.png"
-    );
-
-    mTextureHolder.load(
-        Textures::ID::ObstacleLane, "assets/Textures/ObstacleLane.png"
-    );
-    mTextureHolder.load(
-        Textures::ID::RiverLane, "assets/Textures/RiverLane.png"
-    );
-    mTextureHolder.load(
-        Textures::ID::TrainLane, "assets/Textures/TrainLane.png"
-    );
-    mTextureHolder.load(
-        Textures::ID::VehicleLane, "assets/Textures/VehicleLane.png"
     );
 
     mTextureHolder.load(
@@ -159,20 +89,11 @@ void Program::loadFonts() {
     mFontHolder.load(Fonts::ID::Minecraft, "assets/Fonts/Minecraft.ttf");
 }
 
-void Program::loadSettings() {
-    std::ifstream fin("data/Settings.txt");
-
-    if (!fin.good()) {
-        fin.close();
-        return;
-    }
-
-    fin.close();
-}
-
 void Program::registerStates() {
-    mStateStack.registerState<TitleState>(States::ID::Title);
     mStateStack.registerState<MenuState>(States::ID::Menu);
+    mStateStack.registerState<TransactionState>(States::ID::Transaction);
+    //  mStateStack.registerState<RecurringTransactionsState>(States::ID::RecurringTransactions);
+    mStateStack.registerState<StatisticsState>(States::ID::Statistics);
 }
 
 void Program::handleEvent(sf::Event& event) {

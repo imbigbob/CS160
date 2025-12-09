@@ -16,86 +16,45 @@ MenuState::MenuState(StateStack& stack, Context context)
         windowSize.y / backgroundTexture.getSize().y
     );
 
-    auto newSingleplayerButton = std::make_shared<GUI::Button>(
-        *context.fontHolder, *context.textureHolder, "New Singleplayer"
+    auto transactionButton = std::make_shared<GUI::Button>(
+        *context.fontHolder, *context.textureHolder, "Transaction"
     );
-    newSingleplayerButton->setPosition(
+    transactionButton->setPosition(
         windowSize.x / 2.f, windowSize.y / 2.f - 50.f
     );
-    newSingleplayerButton->setCallback([this]() {
-        requestStackPop();
-        requestStackPush(States::ID::SelectPlayer1Single);
+    transactionButton->setCallback([this]() {
+        requestStackPush(States::ID::Transaction);
     });
 
-    auto loadSingleplayerButton = std::make_shared<GUI::Button>(
-        *context.fontHolder, *context.textureHolder, "Load Singleplayer"
+    auto recurringTransactionsButton = std::make_shared<GUI::Button>(
+        *context.fontHolder, *context.textureHolder, "Recurring transactions"
     );
-    loadSingleplayerButton->setPosition(windowSize.x / 2.f, windowSize.y / 2.f);
-    loadSingleplayerButton->setCallback([this]() {
-        requestStackPop();
-        requestStackPush(States::ID::LoadSingleGame);
+    recurringTransactionsButton->setPosition(
+        windowSize.x / 2.f, windowSize.y / 2.f
+    );
+    recurringTransactionsButton->setCallback([this]() {
+        requestStackPush(States::ID::RecurringTransactions);
     });
 
-    if (!isSinglePlayerLoadable()) {
-        loadSingleplayerButton->setSelectable(false);
-    }
-
-    auto newMutiplayerButton = std::make_shared<GUI::Button>(
-        *context.fontHolder, *context.textureHolder, "New Mutiplayer"
+    auto statisticsButton = std::make_shared<GUI::Button>(
+        *context.fontHolder, *context.textureHolder, "Statistics"
     );
-    newMutiplayerButton->setPosition(
+    statisticsButton->setPosition(
         windowSize.x / 2.f, windowSize.y / 2.f + 50.f
     );
-    newMutiplayerButton->setCallback([this]() {
-        requestStackPop();
-        requestStackPush(States::ID::SelectPlayer1Multi);
-    });
-
-    auto loadMultiplayerButton = std::make_shared<GUI::Button>(
-        *context.fontHolder, *context.textureHolder, "Load Multiplayer"
-    );
-    loadMultiplayerButton->setPosition(
-        windowSize.x / 2.f, windowSize.y / 2.f + 100.f
-    );
-    loadMultiplayerButton->setCallback([this]() {
-        requestStackPop();
-        requestStackPush(States::ID::LoadMultiplayerGame);
-    });
-
-    if (!isMultiPlayerLoadable()) {
-        loadMultiplayerButton->setSelectable(false);
-    }
-
-    auto settingButton = std::make_shared<GUI::Button>(
-        *context.fontHolder, *context.textureHolder, "Setting"
-    );
-    settingButton->setPosition(windowSize.x / 2.f, windowSize.y / 2.f + 150.f);
-    settingButton->setCallback([this]() {
-        requestStackPush(States::ID::Settings);
-    });
-
-    auto highScoreButton = std::make_shared<GUI::Button>(
-        *context.fontHolder, *context.textureHolder, "High Score"
-    );
-    highScoreButton->setPosition(
-        windowSize.x / 2.f, windowSize.y / 2.f + 200.f
-    );
-    highScoreButton->setCallback([this]() {
-        requestStackPush(States::ID::HighScore);
+    statisticsButton->setCallback([this]() {
+        requestStackPush(States::ID::Statistics);
     });
 
     auto exitButton = std::make_shared<GUI::Button>(
         *context.fontHolder, *context.textureHolder, "Exit"
     );
-    exitButton->setPosition(windowSize.x / 2.f, windowSize.y / 2.f + 250.f);
+    exitButton->setPosition(windowSize.x / 2.f, windowSize.y / 2.f + 100.f);
     exitButton->setCallback([this]() { requestStackPop(); });
 
-    mGUIContainer.addComponent(newSingleplayerButton);
-    mGUIContainer.addComponent(loadSingleplayerButton);
-    mGUIContainer.addComponent(newMutiplayerButton);
-    mGUIContainer.addComponent(loadMultiplayerButton);
-    mGUIContainer.addComponent(settingButton);
-    mGUIContainer.addComponent(highScoreButton);
+    mGUIContainer.addComponent(transactionButton);
+    mGUIContainer.addComponent(recurringTransactionsButton);
+    mGUIContainer.addComponent(statisticsButton);
     mGUIContainer.addComponent(exitButton);
 }
 
@@ -110,64 +69,4 @@ void MenuState::draw() {
     sf::RenderWindow& window = *getContext().window;
     window.draw(mBackgroundSprite);
     window.draw(mGUIContainer);
-}
-
-bool MenuState::isSinglePlayerLoadable() {
-    std::ifstream fin;
-    int textureID;
-    fin.open("data/Singleplayer.txt");
-
-    if (!fin.good()) {
-        fin.close();
-        return false;
-    }
-
-    fin.close();
-    fin.open("data/PlayerTexture.txt");
-
-    if (!fin.good()) {
-        fin.close();
-        return false;
-    }
-
-    fin >> textureID;
-
-    if (textureID == static_cast<int>(Textures::ID::None)) {
-        return false;
-    }
-
-    fin.close();
-    return true;
-}
-
-bool MenuState::isMultiPlayerLoadable() {
-    std::ifstream fin;
-    int textureID;
-    fin.open("data/Multiplayer.txt");
-
-    if (!fin.good()) {
-        fin.close();
-        return false;
-    }
-
-    fin.close();
-    fin.open("data/PlayerTexture.txt");
-
-    if (!fin.good()) {
-        fin.close();
-        return false;
-    }
-
-    fin >> textureID;
-
-    for (int i = 0; i < 2; ++i) {
-        fin >> textureID;
-
-        if (textureID == static_cast<int>(Textures::ID::None)) {
-            return false;
-        }
-    }
-
-    fin.close();
-    return true;
 }
