@@ -32,6 +32,7 @@ MenuState::MenuState(StateStack& stack, Context context)
     recurringTransactionsButton->setPosition(
         windowSize.x / 2.f, windowSize.y / 2.f
     );
+
     recurringTransactionsButton->setCallback([this]() {
         requestStackPush(States::ID::RecurringTransaction);
     });

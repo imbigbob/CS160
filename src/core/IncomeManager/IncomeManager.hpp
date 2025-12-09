@@ -13,5 +13,6 @@ class IncomeManager {
     Income* findById(int id);
     double getTotalBalance();
     DynamicArray<Income>& getAll();
+    void updateDB();
 };
 #endif
