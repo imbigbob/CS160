@@ -29,6 +29,7 @@ enum class ID {
     TitleBackground,
     MenuBackground,
     Frame,
+    Add,
 
     ButtonBack,
     ButtonNormal,

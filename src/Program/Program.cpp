@@ -53,6 +53,7 @@ void Program::loadTextures() {
     mTextureHolder.load(
         Textures::ID::MenuBackground, "assets/Textures/MenuBackground.png"
     );
+    mTextureHolder.load(Textures::ID::Frame, "assets/Textures/Add.png");
 
     mTextureHolder.load(
         Textures::ID::ButtonBack, "assets/Textures/ButtonBack.png"

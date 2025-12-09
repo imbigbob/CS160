@@ -2,26 +2,21 @@
 #ifndef EXPENSE_HPP
 #define EXPENSE_HPP
 #include "model/Transaction/Transaction.hpp"
-struct ExpenseCategory {
-    int id;
-    std::string name;
-};
+
 class Expense : public Transaction {
    private:
-    int categoryId;
-
    public:
-    Expense() : Transaction(), categoryId(0) {}
+    Expense() : Transaction() {}
 
     Expense(
-        int id, double amount, std::string date, int walletId,
-        std::string description, int category
+        std::string date, std::string id, std::string name, double amount,
+        std::string walletId, std::string walletName, std::string description
     )
-        : Transaction(id, amount, date, walletId, description),
-          categoryId(category) {}
+        : Transaction(
+              date, id, name, amount, walletId, walletName, description
+          ) {}
 
     int getType() const override { return 2; }
-    int getCategoryId() const;
 };
 
 #endif

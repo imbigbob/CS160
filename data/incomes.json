@@ -1,18 +1,20 @@
 [
   {
-    "amount": 5000.0,
-    "date": "2024-06-15",
-    "description": "Salary for June",
-    "id": 101,
-    "sourceId": 101,
-    "walletId": 1
+    "amount" : 5000.0,
+    "date" : "20240601",
+    "description" : "Monthly salary",
+    "id" : "1",
+    "sourceName" : "Salary",
+    "walletId" : "W1",
+    "walletName" : ""
   },
   {
-    "amount": 200.0,
-    "date": "2024-06-20",
-    "description": "Freelance Project",
-    "id": 102,
-    "sourceId": 102,
-    "walletId": 1
+    "amount" : 1500.0,
+    "date" : "20240615",
+    "description" : "Freelance project payment",
+    "id" : "2",
+    "sourceName" : "Freelance",
+    "walletId" : "W1",
+    "walletName" : ""
   }
 ]
