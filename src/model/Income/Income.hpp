@@ -23,4 +23,9 @@ class Income : public Transaction {
 
     int getType() const override { return 2; }
     int getSourceId() const;
+    double getAmount() const;
+    std::string getDate() const;
+    int getWalletId() const;
+    std::string getDescription() const;
+    void setSourceId(int sourceId);
 };

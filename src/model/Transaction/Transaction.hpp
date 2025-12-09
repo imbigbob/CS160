@@ -21,7 +21,14 @@ class Transaction {
 
     virtual int getType() const = 0;  // 1=Income, 2=Expense
     std::string getDate() const;
-    // Common getters/setters...
+    double getAmount() const;
+    int getWalletId() const;
+    std::string getDescription() const;
+    void setDate(const std::string& date);
+    std::string getDate(const std::string& date);
+    void setAmount(double amount);
+    void setWalletId(int walletId);
+    void setDescription(const std::string& description);
 };
 
 #endif
