@@ -1,5 +1,5 @@
-#ifndef _STATISTICS_STATE_HPP
-#define _STATISTICS_STATE_HPP
+#ifndef _RECURRING_TRANSACTION_STATE_HPP
+#define _RECURRING_TRANSACTION_STATE_HPP
 
 #include "../../Utility/Utility.hpp"
 #include "../GUI/Button/Button.hpp"
@@ -7,9 +7,9 @@
 #include "../GUI/Label/Label.hpp"
 #include "../State.hpp"
 
-class StatisticsState : public State {
+class RecurringTransactionState : public State {
    public:
-    StatisticsState(StateStack& stack, Context context);
+    RecurringTransactionState(StateStack& stack, Context context);
 
     bool handleEvent(const sf::Event& event) override;
     bool update(sf::Time deltaTime) override;

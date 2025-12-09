@@ -17,7 +17,7 @@ int main() {
         Program program;
         program.run();
     } catch (std::exception& e) {
-        std::cout << "EXCEPTION: " << e.what() << '\n';
+        std::cout << "EXCEPTION bug: " << e.what() << '\n';
     }
 
     // Create array of students
