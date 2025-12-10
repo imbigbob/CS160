@@ -3,7 +3,7 @@
 #include <json/json.h>
 
 #include <fstream>
-
+#include <iostream>
 TypeManager::TypeManager(std::string filepath) {
     this->filepath = filepath;
     std::ifstream fin("data/" + filepath + ".json");
@@ -27,6 +27,10 @@ TypeManager::TypeManager(std::string filepath) {
     for (const auto& obj : root) {
         Type type(obj["id"].asString(), obj["name"].asString());
         types.pushBack(type);
+    }
+    for (int i = 0; i < types.getSize(); i++) {
+        std::cout << "Loaded type: " << types[i].getName() << std::endl;
+        std::cout << "With ID: " << types[i].getId() << std::endl;
     }
 }
 bool TypeManager::addType(const Type& t) {
