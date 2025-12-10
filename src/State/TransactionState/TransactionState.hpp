@@ -17,7 +17,7 @@ class TransactionState : public State {
     void draw() override;
 
    private:
-    Mode mMode = Mode::Income;  // <---- ADD
+    Mode mMode = Mode::Income;
     sf::Sprite mBackgroundSprite;
     GUI::Container mGUIContainer;
     sf::Sprite addSprite;

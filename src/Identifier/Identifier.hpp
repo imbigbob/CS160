@@ -7,6 +7,7 @@ enum class ID {
     Transaction,
     RecurringTransaction,
     Statistics,
+    Management,
 
     None,
 };

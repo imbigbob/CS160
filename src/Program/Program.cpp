@@ -1,6 +1,7 @@
 #include "Program.hpp"
 
 #include "../Global/Global.hpp"
+#include "../State/ManagementState/ManagementState.hpp"
 #include "../State/MenuState/MenuState.hpp"
 #include "../State/RecurringTransactionState/RecurringTransactionState.hpp"
 #include "../State/StatisticsState/StatisticsState.hpp"
@@ -97,6 +98,7 @@ void Program::registerStates() {
         States::ID::RecurringTransaction
     );
     mStateStack.registerState<StatisticsState>(States::ID::Statistics);
+    mStateStack.registerState<ManagementState>(States::ID::Management);
 }
 
 void Program::handleEvent(sf::Event& event) {

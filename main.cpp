@@ -28,5 +28,16 @@ int main() {
     typeManager.addType(type1);
     typeManager.addType(type2);
 
-        return 0;
+    Type type3("1", "Rent");
+    Type type4("2", "Utilities");
+    TypeManager expenseTypeManager("ExpenseTypes");
+    expenseTypeManager.addType(type3);
+    expenseTypeManager.addType(type4);
+
+    Type type5("1", "Credit Card");
+    Type type6("2", "Personal Loan");
+    TypeManager walletTypeManager("WalletTypes");
+    walletTypeManager.addType(type5);
+    walletTypeManager.addType(type6);
+    return 0;
 }

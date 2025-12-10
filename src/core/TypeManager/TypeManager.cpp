@@ -6,7 +6,7 @@
 
 TypeManager::TypeManager(std::string filepath) {
     this->filepath = filepath;
-    std::ifstream fin(filepath);
+    std::ifstream fin("data/" + filepath + ".json");
     if (!fin.is_open()) {
         types = DynamicArray<Type>();
         return;

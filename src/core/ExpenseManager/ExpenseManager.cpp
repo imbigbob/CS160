@@ -7,7 +7,7 @@
 #include <fstream>
 #include <iostream>
 ExpenseManager::ExpenseManager() {
-    std::ifstream file("data/expenses.json");
+    std::ifstream file("data/ExpensesTransaction.json");
     if (!file) {
         return;
     }

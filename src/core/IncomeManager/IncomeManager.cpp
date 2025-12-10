@@ -4,7 +4,7 @@
 
 #include <fstream>
 IncomeManager::IncomeManager() {
-    std::ifstream file("data/incomes.json");
+    std::ifstream file("data/IncomesTransaction.json");
     if (!file) {
         return;
     }

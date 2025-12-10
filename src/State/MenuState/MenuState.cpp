@@ -26,11 +26,19 @@ MenuState::MenuState(StateStack& stack, Context context)
         requestStackPush(States::ID::Transaction);
     });
 
+    auto managementButton = std::make_shared<GUI::Button>(
+        *context.fontHolder, *context.textureHolder, "Management"
+    );
+    managementButton->setPosition(windowSize.x / 2.f, windowSize.y / 2.f);
+    managementButton->setCallback([this]() {
+        requestStackPush(States::ID::Management);
+    });
+
     auto recurringTransactionsButton = std::make_shared<GUI::Button>(
         *context.fontHolder, *context.textureHolder, "Recurring"
     );
     recurringTransactionsButton->setPosition(
-        windowSize.x / 2.f, windowSize.y / 2.f
+        windowSize.x / 2.f, windowSize.y / 2.f + 50.f
     );
 
     recurringTransactionsButton->setCallback([this]() {
@@ -41,7 +49,7 @@ MenuState::MenuState(StateStack& stack, Context context)
         *context.fontHolder, *context.textureHolder, "Statistics"
     );
     statisticsButton->setPosition(
-        windowSize.x / 2.f, windowSize.y / 2.f + 50.f
+        windowSize.x / 2.f, windowSize.y / 2.f + 100.f
     );
     statisticsButton->setCallback([this]() {
         requestStackPush(States::ID::Statistics);
@@ -50,10 +58,11 @@ MenuState::MenuState(StateStack& stack, Context context)
     auto exitButton = std::make_shared<GUI::Button>(
         *context.fontHolder, *context.textureHolder, "Exit"
     );
-    exitButton->setPosition(windowSize.x / 2.f, windowSize.y / 2.f + 100.f);
+    exitButton->setPosition(windowSize.x / 2.f, windowSize.y / 2.f + 150.f);
     exitButton->setCallback([this]() { requestStackPop(); });
 
     mGUIContainer.addComponent(transactionButton);
+    mGUIContainer.addComponent(managementButton);
     mGUIContainer.addComponent(recurringTransactionsButton);
     mGUIContainer.addComponent(statisticsButton);
     mGUIContainer.addComponent(exitButton);
