@@ -5,29 +5,53 @@
 #include <string>
 class Transaction {
    protected:
-    int id;
     std::string date;  // or custom Date struct
+    std::string id;
+    std::string name;
     double amount;
-    int walletId;
+    std::string walletId;
+    std::string walletName;
     std::string description;
 
+   private:
    public:
     Transaction()
-        : id(0), amount(0.0), date(""), walletId(0), description("") {}
+        : id(""), amount(0.0), date(""), walletId(""), description("") {}
+
     Transaction(
-        int id, double amount, std::string date, int walletId,
-        std::string description
-    );
+        std::string date, std::string id, std::string name, double amount,
+        std::string walletId, std::string walletName, std::string description
+    ) {
+        this->date = date;
+        this->id = id;
+        this->name = name;
+        this->amount = amount;
+        this->walletId = walletId;
+        this->walletName = walletName;
+        this->description = description;
+    }
 
     virtual int getType() const = 0;  // 1=Income, 2=Expense
     std::string getDate() const;
+    std::string setDate(std::string date) { return this->date = date; }
     double getAmount() const;
-    int getWalletId() const;
-    std::string getDescription() const;
-    void setDate(const std::string& date);
-    std::string getDate(const std::string& date);
     void setAmount(double amount);
-    void setWalletId(int walletId);
+
+    std::string getId() const { return id; }
+    void setId(const std::string& id) { this->id = id; }
+
+    std::string getName() const { return name; }
+    void setName(const std::string& name) { this->name = name; }
+
+    std::string getDate(const std::string& date);
+
+    std::string getWalletId() const;
+    void setWalletId(const std::string& walletId);
+    void setWalletName(const std::string& walletName) {
+        this->walletName = walletName;
+    }
+
+    std::string getDescription() const;
     void setDescription(const std::string& description);
 };
 

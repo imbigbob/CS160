@@ -7,12 +7,13 @@ class ExpenseManager {
     DynamicArray<Expense> list;
 
    public:
-    ExpenseManager() : list() {}
+    ExpenseManager();
     void add(const Expense& w);
     void remove(int id);
 
     double getTotalBalance();
-    int getAll();
+    DynamicArray<Expense>& getAll();
+    void updateDB();
 };
 
 #endif

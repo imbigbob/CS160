@@ -2,7 +2,7 @@
 
 #include "../Global/Global.hpp"
 #include "../State/MenuState/MenuState.hpp"
-// #include "../State/RecurringTransactionsState/RecurringTransactionsState.hpp"
+#include "../State/RecurringTransactionState/RecurringTransactionState.hpp"
 #include "../State/StatisticsState/StatisticsState.hpp"
 #include "../State/TransactionState/TransactionState.hpp"
 Program::Program()
@@ -53,6 +53,7 @@ void Program::loadTextures() {
     mTextureHolder.load(
         Textures::ID::MenuBackground, "assets/Textures/MenuBackground.png"
     );
+    mTextureHolder.load(Textures::ID::Frame, "assets/Textures/Add.png");
 
     mTextureHolder.load(
         Textures::ID::ButtonBack, "assets/Textures/ButtonBack.png"
@@ -92,7 +93,9 @@ void Program::loadFonts() {
 void Program::registerStates() {
     mStateStack.registerState<MenuState>(States::ID::Menu);
     mStateStack.registerState<TransactionState>(States::ID::Transaction);
-    //  mStateStack.registerState<RecurringTransactionsState>(States::ID::RecurringTransactions);
+    mStateStack.registerState<RecurringTransactionState>(
+        States::ID::RecurringTransaction
+    );
     mStateStack.registerState<StatisticsState>(States::ID::Statistics);
 }
 

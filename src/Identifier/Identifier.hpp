@@ -5,7 +5,7 @@ namespace States {
 enum class ID {
     Menu,
     Transaction,
-    RecurringTransactions,
+    RecurringTransaction,
     Statistics,
 
     None,
@@ -29,6 +29,7 @@ enum class ID {
     TitleBackground,
     MenuBackground,
     Frame,
+    Add,
 
     ButtonBack,
     ButtonNormal,

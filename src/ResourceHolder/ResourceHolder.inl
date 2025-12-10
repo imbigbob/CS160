@@ -10,7 +10,6 @@ void ResourceHolder<Resource, Identifier>::load(
     if (!resource->loadFromFile(filename)) {
         throw std::runtime_error("Failed to load " + filename);
     }
-
     mResourceMap[id] = std::move(resource);
 }
 

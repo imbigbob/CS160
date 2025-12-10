@@ -27,13 +27,14 @@ MenuState::MenuState(StateStack& stack, Context context)
     });
 
     auto recurringTransactionsButton = std::make_shared<GUI::Button>(
-        *context.fontHolder, *context.textureHolder, "Recurring transactions"
+        *context.fontHolder, *context.textureHolder, "Recurring"
     );
     recurringTransactionsButton->setPosition(
         windowSize.x / 2.f, windowSize.y / 2.f
     );
+
     recurringTransactionsButton->setCallback([this]() {
-        requestStackPush(States::ID::RecurringTransactions);
+        requestStackPush(States::ID::RecurringTransaction);
     });
 
     auto statisticsButton = std::make_shared<GUI::Button>(
