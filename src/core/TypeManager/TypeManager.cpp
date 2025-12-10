@@ -5,6 +5,7 @@
 #include <fstream>
 
 TypeManager::TypeManager(std::string filepath) {
+    this->filepath = filepath;
     std::ifstream fin(filepath);
     if (!fin.is_open()) {
         types = DynamicArray<Type>();
@@ -24,23 +25,21 @@ TypeManager::TypeManager(std::string filepath) {
     }
 
     for (const auto& obj : root) {
-        Type type;
-        if (obj.isMember("id")) type.setId(obj["id"].asString());
-        if (obj.isMember("name")) type.setName(obj["name"].asString());
-
+        Type type(obj["id"].asString(), obj["name"].asString());
         types.pushBack(type);
     }
 }
 bool TypeManager::addType(const Type& t) {
     for (size_t i = 0; i < types.getSize(); ++i) {
-        if (types[i].name.compare(t.name) == 0) {
+        if (types[i].getName().compare(t.getName()) == 0) {
             return false;
         }
     }
     types.pushBack(t);
+    updateDb();
     return true;
 }
-void updateDb() {
+void TypeManager::updateDb() {
     Json::Value root(Json::arrayValue);
 
     for (int i = 0; i < types.getSize(); i++) {

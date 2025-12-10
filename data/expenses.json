@@ -52,5 +52,32 @@
     "id" : "3",
     "walletId" : "W1",
     "walletName" : ""
+  },
+  {
+    "amount" : 150.0,
+    "categoryName" : "Groceries",
+    "date" : "2024-10-01",
+    "description" : "Weekly groceries",
+    "id" : "1",
+    "walletId" : "W1",
+    "walletName" : ""
+  },
+  {
+    "amount" : 50.0,
+    "categoryName" : "Transport",
+    "date" : "2024-10-02",
+    "description" : "Bus pass",
+    "id" : "2",
+    "walletId" : "W1",
+    "walletName" : ""
+  },
+  {
+    "amount" : 80.0,
+    "categoryName" : "Dining Out",
+    "date" : "2024-10-03",
+    "description" : "Dinner with friends",
+    "id" : "3",
+    "walletId" : "W1",
+    "walletName" : ""
   }
 ]

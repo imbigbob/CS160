@@ -6,10 +6,8 @@
 #include <string>
 
 #include "src/Program/Program.hpp"
-#include "src/core/ExpenseManager/ExpenseManager.hpp"
-#include "src/core/IncomeManager/IncomeManager.hpp"
-#include "src/model/Expense/Expense.hpp"
-#include "src/model/Income/Income.hpp"
+#include "src/core/TypeManager/TypeManager.hpp"
+#include "src/model/Type/Type.hpp"
 struct Student {
     int id;
     std::string name;
@@ -24,26 +22,11 @@ int main() {
         std::cout << "EXCEPTION bug: " << e.what() << '\n';
     }
 
-    // IncomeManager incomeManager;
+    Type type1("1", "Salary");
+    Type type2("2", "Freelance");
+    TypeManager typeManager("IncomeTypes");
+    typeManager.addType(type1);
+    typeManager.addType(type2);
 
-    // std::cout << "Total Income: " << incomeManager.getTotalBalance()
-    //           << std::endl;
-    Expense expense(
-        "2024-10-01", "1", "Groceries", 150.0, "W1", "Main Wallet",
-        "Weekly groceries"
-    );
-    Expense expense2(
-        "2024-10-02", "2", "Transport", 50.0, "W1", "Main Wallet", "Bus pass"
-    );
-    Expense expense3(
-        "2024-10-03", "3", "Dining Out", 80.0, "W1", "Cash Wallet",
-        "Dinner with friends"
-    );
-    ExpenseManager expenseManager;
-    expenseManager.add(expense);
-    expenseManager.add(expense2);
-    expenseManager.add(expense3);
-    // expenseManager.updateDB();
-
-    return 0;
+        return 0;
 }

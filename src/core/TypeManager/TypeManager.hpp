@@ -12,6 +12,7 @@ class TypeManager {
 
     bool addType(const Type& t);
     DynamicArray<Type>& getAllTypes() { return types; }
+    void updateDb();
 };
 
 #endif  // TYPEMANAGER_HPP
