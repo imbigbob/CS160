@@ -16,6 +16,8 @@ class RecurringManager {
     DynamicArray<RecurringTransaction> rules;
 
    public:
+    // RecurringManager();
     void addRule(const RecurringTransaction&);
     void applyForCurrentMonth(TransactionManager& tm);
+    // void updateDB();
 };

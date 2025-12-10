@@ -1,5 +1,6 @@
 #include <string>
-struct ExpenseCategory {
-    int id;
+
+struct Type {
+    std::string id;
     std::string name;
 };
