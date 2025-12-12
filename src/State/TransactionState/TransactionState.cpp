@@ -1,5 +1,6 @@
 #include "TransactionState.hpp"
 
+#include <../src/core/DynamicArray/DynamicArray.hpp>
 #include <fstream>
 
 #include "../../Utility/Utility.hpp"
@@ -67,12 +68,15 @@ TransactionState::TransactionState(StateStack& stack, Context context)
     mTableHeader.setFillColor(sf::Color(230, 230, 230));
 
     sf::Font& font = context.fontHolder->get(Fonts::ID::Dosis);
-    std::vector<std::string> headers = {
-        "Date", "Source", "Amount", "Description"
-    };
+    DynamicArray<std::string> headers;
+    headers.pushBack("Date");
+    headers.pushBack("Source");
+    headers.pushBack("Amount");
+    headers.pushBack("Description");
+
     float currentX = TABLE_X;
 
-    for (int i = 0; i < headers.size(); i++) {
+    for (int i = 0; i < headers.getSize(); i++) {
         sf::Text text;
         text.setFont(font);
         text.setString(headers[i]);
@@ -164,9 +168,14 @@ void TransactionState::reloadTable() {
         mRowRects.push_back(rowRect);
 
         // Row Text
-        std::vector<std::string> items = {date, name, amountStr, desc};
+        DynamicArray<std::string> items;
+        items.pushBack(date);
+        items.pushBack(name);
+        items.pushBack(amountStr);
+        items.pushBack(desc);
+
         float cx = tableX;
-        for (int col = 0; col < items.size(); col++) {
+        for (int col = 0; col < items.getSize(); col++) {
             sf::Text t;
             t.setFont(font);
             t.setString(items[col]);

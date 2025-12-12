@@ -10,6 +10,7 @@
 #include "../GUI/Container/Container.hpp"
 #include "../GUI/Label/Label.hpp"
 #include "../State.hpp"
+#include "../src/core/DynamicArray/DynamicArray.hpp"
 class ManagementState : public State {
    public:
     ManagementState(StateStack& stack, Context context);
@@ -40,12 +41,11 @@ class ManagementState : public State {
     TypeManager walletTypeManager{"WalletTypes"};
 
     sf::RectangleShape mTableHeader;
-    std::vector<sf::Text> mHeaderTexts;
+    DynamicArray<sf::Text> mHeaderTexts;
 
     // --- Table Content (Scrollable) ---
     std::vector<sf::RectangleShape> mRowRects;  // Backgrounds for rows
     std::vector<sf::Text> mRowTexts;            // Text data for rows
-
     // --- Scrolling Mechanics ---
     sf::View mTableView;         // Camera for the list
     sf::FloatRect mTableBounds;  // Visible area on screen

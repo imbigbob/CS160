@@ -22,6 +22,11 @@ class DynamicArray {
     const T& operator[](int index) const;
     int getSize() const;
     bool empty() const;
+    void clear() {
+        delete[] data;
+        size = 0;
+        capacity = 2;
+    };
 };
 template <typename T>
 void DynamicArray<T>::pushBack(const T& value) {
@@ -81,8 +86,6 @@ DynamicArray<T>& DynamicArray<T>::operator=(const DynamicArray& other) {
     }
     return *this;
 }
-
-
 
 template <typename T>
 void DynamicArray<T>::removeAt(int index) {

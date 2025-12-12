@@ -1,5 +1,6 @@
 #include "ManagementState.hpp"
 
+#include <../src/core/DynamicArray/DynamicArray.hpp>
 #include <algorithm>  // for std::max
 // Layout Constants
 const float TABLE_X = 200.f;
@@ -76,10 +77,12 @@ ManagementState::ManagementState(StateStack& stack, Context context)
     mTableHeader.setFillColor(sf::Color(230, 230, 230));
 
     sf::Font& font = context.fontHolder->get(Fonts::ID::Dosis);
-    std::vector<std::string> headers = {"No.", "Name"};
+    DynamicArray<std::string> headers;
+    headers.pushBack("No.");
+    headers.pushBack("Name");
 
     float currentX = TABLE_X;
-    for (int i = 0; i < headers.size(); i++) {
+    for (int i = 0; i < headers.getSize(); i++) {
         sf::Text text;
         text.setFont(font);
         text.setString(headers[i]);
@@ -88,7 +91,7 @@ ManagementState::ManagementState(StateStack& stack, Context context)
 
         // Center text vertically in header
         text.setPosition(currentX + 10.f, TABLE_Y + 8.f);
-        mHeaderTexts.push_back(text);
+        mHeaderTexts.pushBack(text);
 
         currentX += colWidth[i];
     }
@@ -162,11 +165,14 @@ void ManagementState::reloadTable() {
         // Column 2: ID (Optional, assuming types have getID, or blank)
         std::string idStr = "";  // types[i].getID();
 
-        std::vector<std::string> rowData = {orderStr, nameStr, idStr};
+        DynamicArray<std::string> rowData;
+        rowData.pushBack(orderStr);
+        rowData.pushBack(nameStr);
+        rowData.pushBack(idStr);
 
         // --- 3. Create Text ---
         float cx = tableX;
-        for (int col = 0; col < rowData.size(); col++) {
+        for (int col = 0; col < rowData.getSize(); col++) {
             sf::Text t;
             t.setFont(font);
             t.setString(rowData[col]);
@@ -222,8 +228,9 @@ void ManagementState::draw() {
 
     // Draw Header
     window.draw(mTableHeader);
-    for (auto& t : mHeaderTexts) window.draw(t);
-
+    for (int i = 0; i < mHeaderTexts.getSize(); i++) {
+        window.draw(mHeaderTexts[i]);
+    }
     // 2. Table View (Rows)
     window.setView(mTableView);
     for (auto& r : mRowRects) window.draw(r);
