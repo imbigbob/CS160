@@ -1,10 +1,8 @@
 #pragma once
 #include <string>
-
 #include "../Transaction/Transaction.hpp"
 
 class Income : public Transaction {
-   private:
    public:
     Income() : Transaction() {}
 
@@ -17,4 +15,6 @@ class Income : public Transaction {
           ) {}
 
     int getType() const override { return 2; }
+
+    std::string getWalletName() const { return walletName; }
 };
