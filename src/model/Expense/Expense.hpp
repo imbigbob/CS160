@@ -1,10 +1,9 @@
-// Expense.hpp
 #ifndef EXPENSE_HPP
 #define EXPENSE_HPP
-#include "model/Transaction/Transaction.hpp"
+#include <string>
+#include "../Transaction/Transaction.hpp"
 
 class Expense : public Transaction {
-   private:
    public:
     Expense() : Transaction() {}
 
@@ -16,7 +15,11 @@ class Expense : public Transaction {
               date, id, name, amount, walletId, walletName, description
           ) {}
 
+    // 2 represents Expense
     int getType() const override { return 2; }
+
+    // Expose protected walletName from Transaction base class
+    std::string getWalletName() const { return walletName; }
 };
 
 #endif
