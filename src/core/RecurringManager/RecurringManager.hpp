@@ -1,23 +1,35 @@
+#include <ctime>
 #include <string>
 
 #include "core/DynamicArray/DynamicArray.hpp"
 #include "core/TransactionManager/TransactionManager.hpp"
+#include "model/Transaction/Transaction.hpp"
 struct RecurringTransaction {
-    int type;  // 1=Income, 2=Expense
-    double amount;
-    int walletId;
-    int sourceIdOrCateId;
+    Transaction baseTransaction();
     std::string startDate;
     std::string endDate;  // "" means infinite
 };
 
 class RecurringManager {
    private:
-    DynamicArray<RecurringTransaction> rules;
+    DynamicArray<RecurringTransaction> Incomes;
+    DynamicArray<RecurringTransaction> Expenses;
+
+   private:
+    void updateDB();
+    bool checkTransactionExists(
+        const RecurringTransaction& rt, const TransactionManager& tm
+    );
 
    public:
     // RecurringManager();
     void addRule(const RecurringTransaction&);
     void applyForCurrentMonth(TransactionManager& tm);
-    // void updateDB();
+    void updateRecurringTransactions(TransactionManager& tm);
+    DynamicArray<RecurringTransaction>& getIncomes();
+    DynamicArray<RecurringTransaction>& getExpenses();
+    DynamicArray<RecurringTransaction>& getAll();
 };
+
+std::string getCurrentDate();
+int getCurrentDay();
