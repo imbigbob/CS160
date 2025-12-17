@@ -1,8 +1,9 @@
 #include "IncomeManager.hpp"
-
 #include <json/json.h>
 #include <fstream>
 #include <iostream>
+#include <memory>
+#include <stdexcept>
 
 IncomeManager::IncomeManager() {
     std::ifstream file("data/incomes.json");
@@ -15,20 +16,13 @@ IncomeManager::IncomeManager() {
             if (root.isArray()) {
                 for (const auto& obj : root) {
                     Income income;
-                    if (obj.isMember("date")) income.setDate(obj["date"].asString());
                     if (obj.isMember("id")) income.setId(obj["id"].asString());
-                    if (obj.isMember("sourceName"))
-                        income.setName(obj["sourceName"].asString());
+                    if (obj.isMember("date")) income.setDate(obj["date"].asString());
+                    if (obj.isMember("sourceName")) income.setName(obj["sourceName"].asString());
                     if (obj.isMember("amount")) income.setAmount(obj["amount"].asDouble());
-
-                    if (obj.isMember("walletId"))
-                        income.setWalletId(obj["walletId"].asString());
-
-                    if (obj.isMember("walletName"))
-                        income.setWalletName(obj["walletName"].asString());
-                    if (obj.isMember("description"))
-                        income.setDescription(obj["description"].asString());
-
+                    if (obj.isMember("walletId")) income.setWalletId(obj["walletId"].asString());
+                    if (obj.isMember("walletName")) income.setWalletName(obj["walletName"].asString());
+                    if (obj.isMember("description")) income.setDescription(obj["description"].asString());
                     list.pushBack(income);
                 }
             }
@@ -46,10 +40,8 @@ IncomeManager::IncomeManager() {
             if (typeRoot.isArray()) {
                 for (const auto& obj : typeRoot) {
                     IncomeType type;
-                 
                     if (obj.isMember("id")) type.setId(obj["id"].asString());
                     if (obj.isMember("name")) type.setName(obj["name"].asString());
-                    
                     typeList.pushBack(type);
                 }
             }
@@ -61,7 +53,6 @@ IncomeManager::IncomeManager() {
 void IncomeManager::add(const Income& w) {
     list.pushBack(w);
     updateDB();
-    return;
 }
 
 void IncomeManager::remove(std::string id) {
@@ -99,21 +90,18 @@ void IncomeManager::updateDB() {
     for (int i = 0; i < list.getSize(); i++) {
         const Income& income = list[i];
         Json::Value obj;
-        obj["date"] = income.getDate();
         obj["id"] = income.getId();
+        obj["date"] = income.getDate();
         obj["sourceName"] = income.getName();
         obj["amount"] = income.getAmount();
         obj["walletId"] = income.getWalletId();
         obj["walletName"] = income.getWalletName(); 
         obj["description"] = income.getDescription();
-
         root.append(obj);
     }
     
     std::ofstream file("data/incomes.json");
-    if (!file) {
-        throw std::runtime_error("Error opening incomes.json for writing");
-    }
+    if (!file) return;
 
     Json::StreamWriterBuilder writer;
     writer["indentation"] = "  "; 
@@ -163,9 +151,7 @@ void IncomeManager::updateTypeDB() {
     }
 
     std::ofstream file("data/incometypes.json");
-    if (!file) {
-        throw std::runtime_error("Error opening incometypes.json for writing");
-    }
+    if (!file) return;
 
     Json::StreamWriterBuilder writer;
     writer["indentation"] = "  ";
