@@ -1,0 +1,18 @@
+[
+  {
+    "id": "inc_01",
+    "name": "Salary"
+  },
+  {
+    "id": "inc_02",
+    "name": "Bonus"
+  },
+  {
+    "id": "inc_03",
+    "name": "Savings Interest"
+  },
+  {
+    "id": "inc_04",
+    "name": "Freelance"
+  }
+]

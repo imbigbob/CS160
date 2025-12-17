@@ -1,0 +1,22 @@
+[
+  {
+    "id": "exp_01",
+    "name": "Food"
+  },
+  {
+    "id": "exp_02",
+    "name": "Rent"
+  },
+  {
+    "id": "exp_03",
+    "name": "Transportation"
+  },
+  {
+    "id": "exp_04",
+    "name": "Utilities"
+  },
+  {
+    "id": "exp_05",
+    "name": "Entertainment"
+  }
+]
