@@ -1,45 +1,62 @@
 #include "IncomeManager.hpp"
 
 #include <json/json.h>
-
 #include <fstream>
+#include <iostream>
+
 IncomeManager::IncomeManager() {
     std::ifstream file("data/incomes.json");
-    if (!file) {
-        return;
+    if (file) {
+        Json::Value root;
+        Json::CharReaderBuilder reader;
+        std::string errs;
+
+        if (Json::parseFromStream(reader, file, &root, &errs)) {
+            if (root.isArray()) {
+                for (const auto& obj : root) {
+                    Income income;
+                    if (obj.isMember("date")) income.setDate(obj["date"].asString());
+                    if (obj.isMember("id")) income.setId(obj["id"].asString());
+                    if (obj.isMember("sourceName"))
+                        income.setName(obj["sourceName"].asString());
+                    if (obj.isMember("amount")) income.setAmount(obj["amount"].asDouble());
+
+                    if (obj.isMember("walletId"))
+                        income.setWalletId(obj["walletId"].asString());
+
+                    if (obj.isMember("walletName"))
+                        income.setWalletName(obj["walletName"].asString());
+                    if (obj.isMember("description"))
+                        income.setDescription(obj["description"].asString());
+
+                    list.pushBack(income);
+                }
+            }
+        }
     }
+    file.close(); 
 
-    Json::Value root;
-    Json::CharReaderBuilder reader;
-    std::string errs;
+    std::ifstream typeFile("data/incometypes.json");
+    if (typeFile) {
+        Json::Value typeRoot;
+        Json::CharReaderBuilder typeReader;
+        std::string typeErrs;
 
-    if (!Json::parseFromStream(reader, file, &root, &errs)) {
-        throw std::runtime_error("Error parsing incomes.json: " + errs);
-    }
-
-    if (!root.isArray()) {
-        throw std::runtime_error("Invalid JSON format: root is not an array");
-    }
-
-    for (const auto& obj : root) {
-        Income income;
-        if (obj.isMember("date")) income.setDate(obj["date"].asString());
-        if (obj.isMember("id")) income.setId(obj["id"].asString());
-        if (obj.isMember("sourceName"))
-            income.setName(obj["sourceName"].asString());
-        if (obj.isMember("amount")) income.setAmount(obj["amount"].asDouble());
-
-        if (obj.isMember("walletId"))
-            income.setWalletId(obj["walletId"].asString());
-
-        if (obj.isMember("walletName"))
-            income.setWalletName(obj["walletName"].asString());
-        if (obj.isMember("description"))
-            income.setDescription(obj["description"].asString());
-
-        list.pushBack(income);
+        if (Json::parseFromStream(typeReader, typeFile, &typeRoot, &typeErrs)) {
+            if (typeRoot.isArray()) {
+                for (const auto& obj : typeRoot) {
+                    IncomeType type;
+                 
+                    if (obj.isMember("id")) type.setId(obj["id"].asString());
+                    if (obj.isMember("name")) type.setName(obj["name"].asString());
+                    
+                    typeList.pushBack(type);
+                }
+            }
+        }
     }
 }
+
 
 void IncomeManager::add(const Income& w) {
     list.pushBack(w);
@@ -47,14 +64,22 @@ void IncomeManager::add(const Income& w) {
     return;
 }
 
-void IncomeManager::remove(int id) { return; }
+void IncomeManager::remove(std::string id) {
+    for (int i = 0; i < list.getSize(); i++) {
+        if (list[i].getId() == id) {
+            list.removeAt(i);
+            updateDB();
+            return;
+        }
+    }
+}
 
-Income* IncomeManager::findById(int id) {
-    // for (int i = 0; i < list.getSize(); i++) {
-    //     if (list[i].getId() == id) {
-    //         return &list[i];
-    //     }
-    // }
+Income* IncomeManager::findById(std::string id) {
+    for (int i = 0; i < list.getSize(); i++) {
+        if (list[i].getId() == id) {
+            return &list[i];
+        }
+    }
     return nullptr;
 }
 
@@ -71,7 +96,6 @@ DynamicArray<Income>& IncomeManager::getAll() { return list; }
 void IncomeManager::updateDB() {
     Json::Value root(Json::arrayValue);
 
-    // Convert DynamicArray<Income> → Json::Value array
     for (int i = 0; i < list.getSize(); i++) {
         const Income& income = list[i];
         Json::Value obj;
@@ -79,21 +103,72 @@ void IncomeManager::updateDB() {
         obj["id"] = income.getId();
         obj["sourceName"] = income.getName();
         obj["amount"] = income.getAmount();
-
         obj["walletId"] = income.getWalletId();
-        obj["walletName"] = "";  // Placeholder, as Wallet name is not in Income
+        obj["walletName"] = income.getWalletName(); 
         obj["description"] = income.getDescription();
 
         root.append(obj);
     }
-    // Write to file
+    
     std::ofstream file("data/incomes.json");
     if (!file) {
         throw std::runtime_error("Error opening incomes.json for writing");
     }
 
     Json::StreamWriterBuilder writer;
-    writer["indentation"] = "  ";  // pretty print
+    writer["indentation"] = "  "; 
+    std::unique_ptr<Json::StreamWriter> jsonWriter(writer.newStreamWriter());
+    jsonWriter->write(root, &file);
+}
+
+
+void IncomeManager::addType(const IncomeType& t) {
+    typeList.pushBack(t);
+    updateTypeDB();
+}
+
+void IncomeManager::modifyType(const IncomeType& t) {
+    for (int i = 0; i < typeList.getSize(); i++) {
+        if (typeList[i].getId() == t.getId()) {
+            typeList[i] = t; 
+            updateTypeDB();
+            return;
+        }
+    }
+}
+
+void IncomeManager::removeType(std::string id) {
+    for (int i = 0; i < typeList.getSize(); i++) {
+        if (typeList[i].getId() == id) {
+            typeList.removeAt(i);
+            updateTypeDB();
+            return;
+        }
+    }
+}
+
+DynamicArray<IncomeType>& IncomeManager::getAllTypes() {
+    return typeList;
+}
+
+void IncomeManager::updateTypeDB() {
+    Json::Value root(Json::arrayValue);
+
+    for (int i = 0; i < typeList.getSize(); i++) {
+        const IncomeType& type = typeList[i];
+        Json::Value obj;
+        obj["id"] = type.getId();
+        obj["name"] = type.getName();
+        root.append(obj);
+    }
+
+    std::ofstream file("data/incometypes.json");
+    if (!file) {
+        throw std::runtime_error("Error opening incometypes.json for writing");
+    }
+
+    Json::StreamWriterBuilder writer;
+    writer["indentation"] = "  ";
     std::unique_ptr<Json::StreamWriter> jsonWriter(writer.newStreamWriter());
     jsonWriter->write(root, &file);
 }
