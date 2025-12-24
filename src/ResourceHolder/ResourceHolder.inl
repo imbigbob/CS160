@@ -7,7 +7,7 @@ void ResourceHolder<Resource, Identifier>::load(
 {
     std::unique_ptr<Resource> resource(new Resource());
 
-    if (!resource->loadFromFile("../" + filename))
+    if (!resource->loadFromFile(filename))
     {
         throw std::runtime_error("Failed to load " + filename);
     }
