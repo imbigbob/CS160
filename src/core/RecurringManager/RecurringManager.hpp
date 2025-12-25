@@ -34,7 +34,7 @@ class RecurringManager {
 
 //    private:
     void updateDB(const std::string& filepath, DynamicArray<RecurringTransaction>& list);
-    void loadFromDB(const std::string& filepath, DynamicArray<RecurringTransaction>& list, bool isIncomeList);
+    void loadFromDB(const std::string& filepath, DynamicArray<RecurringTransaction>& list, int type);
 
     std::string getCurrentYM();
 //     bool checkTransactionExists(
