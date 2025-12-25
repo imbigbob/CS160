@@ -73,6 +73,8 @@ void RecurringManager::loadFromDB(const std::string& filepath, DynamicArray<Recu
         if (obj.isMember("walletId")) r.walletId = obj["walletId"].asString();
         if (obj.isMember("description")) r.description = obj["description"].asString();
         if (obj.isMember("day")) r.day = obj["day"].asInt();
+        if (obj.isMember("startDate")) r.startDate = obj["startDate"].asString();
+        if (obj.isMember("endDate")) r.endDate = obj["endDate"].asString();
         if (obj.isMember("lastAppliedYM")) r.lastAppliedYM = obj["lastAppliedYM"].asString();
 
         list.pushBack(r);
@@ -100,6 +102,8 @@ void RecurringManager::updateDB(const std::string& filepath, DynamicArray<Recurr
         obj["walletId"] = r.walletId;
         obj["description"] = r.description;
         obj["day"] = r.day;
+        obj["startDate"] = r.startDate;
+        obj["endDate"] = r.endDate;
         obj["lastAppliedYM"] = r.lastAppliedYM;
 
         root.append(obj);
@@ -135,6 +139,8 @@ void RecurringManager::processRecurring(IncomeManager& im, ExpenseManager& em) {
         RecurringTransaction& rule = incomeRules[i];
         if (rule.lastAppliedYM == currentMonth) continue;
         if (currentDay < rule.day) continue;
+        if (!rule.startDate.empty() && todayDate < rule.startDate) continue;
+        if (!rule.endDate.empty() && todayDate > rule.endDate) continue;
 
         // Income profile
         Income inc;
@@ -157,6 +163,8 @@ void RecurringManager::processRecurring(IncomeManager& im, ExpenseManager& em) {
         RecurringTransaction& rule = expenseRules[i];
         if (rule.lastAppliedYM == currentMonth) continue;
         if (currentDay < rule.day) continue;
+        if (!rule.startDate.empty() && todayDate < rule.startDate) continue;
+        if (!rule.endDate.empty() && todayDate > rule.endDate) continue;
 
         // Expense profile
         Expense exp;
