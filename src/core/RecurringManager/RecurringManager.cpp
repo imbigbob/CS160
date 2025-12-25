@@ -147,7 +147,6 @@ void RecurringManager::processRecurring(IncomeManager& im, ExpenseManager& em) {
         
         im.add(inc); // from IncomeManager
 
-
         rule.lastAppliedYM = currentMonth;
         incomeChanged = true;
         std::cout << ">> [Auto Income] Created: " << rule.description << "\n";
@@ -175,7 +174,7 @@ void RecurringManager::processRecurring(IncomeManager& im, ExpenseManager& em) {
         std::cout << ">> [Auto Expense] Created: " << rule.description << "\n";
     }
 
-    // Lưu riêng từng file nếu có thay đổi
+    // Update if there are some changes
     if (incomeChanged) updateDB(incomeFilepath, incomeRules);
     if (expenseChanged) updateDB(expenseFilepath, expenseRules);
 }
