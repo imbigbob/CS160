@@ -76,6 +76,36 @@ void RecurringManager::loadFromDB(const std::string& filepath, DynamicArray<Recu
 
         list.pushBack(r);
     }
+
+    file.close();
+}
+
+void RecurringManager::updateDB(const std::string& filepath, DynamicArray<RecurringTransaction>& list) {
+
+    // Json write stuff
+    std::ofstream file(filepath);
+    if (!file.is_open()) return;
+
+    Json::Value root(Json::arrayValue);
+
+    for (int i = 0; i < list.getSize(); i++) {
+        RecurringTransaction& r = list[i];
+        Json::Value obj;
+        // Không cần lưu isIncome nữa vì tên file đã nói lên tất cả
+        // Nhưng lưu dư cũng không sao
+        obj["amount"] = r.amount;
+        obj["categoryId"] = r.categoryId;
+        obj["categoryName"] = r.categoryName;
+        obj["walletId"] = r.walletId;
+        obj["description"] = r.description;
+        obj["day"] = r.day;
+        obj["lastAppliedYM"] = r.lastAppliedYM;
+
+        root.append(obj);
+    }
+
+    file << root;
+    file.close();
 }
 
 
