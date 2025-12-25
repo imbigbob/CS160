@@ -5,36 +5,37 @@
 
 class StateStack;
 
-class State {
-   public:
+class State
+{
+public:
     typedef std::unique_ptr<State> Ptr;
 
-    struct Context {
+    struct Context
+    {
         Context(
-            sf::RenderWindow& window, TextureHolder& textureHolder,
-            FontHolder& fontHolder
-        );
+            sf::RenderWindow &window, TextureHolder &textureHolder,
+            FontHolder &fontHolder);
 
-        sf::RenderWindow* window;
-        TextureHolder* textureHolder;
-        FontHolder* fontHolder;
+        sf::RenderWindow *window;
+        TextureHolder *textureHolder;
+        FontHolder *fontHolder;
     };
 
-    State(StateStack& stack, Context context);
+    State(StateStack &stack, Context context);
     virtual ~State();
 
-    virtual bool handleEvent(const sf::Event& event) = 0;
+    virtual bool handleEvent(const sf::Event &event) = 0;
     virtual bool update(sf::Time deltaTime) = 0;
     virtual void draw() = 0;
 
-   protected:
+protected:
     void requestStackPush(States::ID stateID);
     void requestStackPop();
     void requestStackClear();
     Context getContext() const;
 
-   private:
-    StateStack* mStack;
+private:
+    StateStack *mStack;
     Context mContext;
 };
 

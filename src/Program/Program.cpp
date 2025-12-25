@@ -6,6 +6,7 @@
 #include "../State/RecurringTransactionState/RecurringTransactionState.hpp"
 #include "../State/StatisticsState/StatisticsState.hpp"
 #include "../State/TransactionState/TransactionState.hpp"
+#include "../State/ManagementEditState/ManagementEditState.hpp"
 Program::Program()
     : mWindow(
           sf::VideoMode(Global::WINDOW_WIDTH, Global::WINDOW_HEIGHT),
@@ -55,7 +56,8 @@ void Program::loadTextures()
 {
     mTextureHolder.load(
         Textures::ID::MenuBackground, "assets/Textures/MenuBackground.jpg");
-    mTextureHolder.load(Textures::ID::Frame, "assets/Textures/Add.png");
+    mTextureHolder.load(Textures::ID::Bin, "assets/Textures/Bin.png");
+    mTextureHolder.load(Textures::ID::Edit, "assets/Textures/Edit.png");
 
     mTextureHolder.load(
         Textures::ID::ButtonBack, "assets/Textures/ButtonBack.png");
@@ -93,6 +95,7 @@ void Program::registerStates()
         States::ID::RecurringTransaction);
     mStateStack.registerState<StatisticsState>(States::ID::Statistics);
     mStateStack.registerState<ManagementState>(States::ID::Management);
+    mStateStack.registerState<ManagementEditState>(States::ID::ManagementEdit);
 }
 
 void Program::handleEvent(sf::Event &event)

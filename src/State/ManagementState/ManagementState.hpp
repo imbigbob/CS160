@@ -10,22 +10,36 @@
 #include "../GUI/Container/Container.hpp"
 #include "../GUI/Label/Label.hpp"
 #include "../State.hpp"
-class ManagementState : public State {
-   public:
-    ManagementState(StateStack& stack, Context context);
+class ManagementState : public State
+{
+public:
+    ManagementState(StateStack &stack, Context context);
 
     virtual void draw() override;
     virtual bool update(sf::Time deltaTime) override;
-    virtual bool handleEvent(const sf::Event& event) override;
+    virtual bool handleEvent(const sf::Event &event) override;
 
-   private:
+private:
     void reloadTable();
     void updateScrollView();
+    void handleEdit(int index);
+    void handleDelete(int index);
 
-   private:
-    enum class Mode { Income, Expense, Wallet };
+private:
+    enum class Mode
+    {
+        Income,
+        Expense,
+        Wallet
+    };
 
     sf::Sprite mBackgroundSprite;
+    std::vector<sf::Sprite> mEditSprites;
+    std::vector<sf::Sprite> mDeleteSprites;
+    bool mNeedsRefresh = false;
+
+    // Helper to handle the actual logic
+
     GUI::Container mGUIContainer;
 
     // Buttons tracked for text updates
@@ -43,13 +57,13 @@ class ManagementState : public State {
     std::vector<sf::Text> mHeaderTexts;
 
     // --- Table Content (Scrollable) ---
-    std::vector<sf::RectangleShape> mRowRects;  // Backgrounds for rows
-    std::vector<sf::Text> mRowTexts;            // Text data for rows
+    std::vector<sf::RectangleShape> mRowRects; // Backgrounds for rows
+    std::vector<sf::Text> mRowTexts;           // Text data for rows
 
     // --- Scrolling Mechanics ---
-    sf::View mTableView;         // Camera for the list
-    sf::FloatRect mTableBounds;  // Visible area on screen
-    float mScrollY;              // Current scroll position
-    float mTotalContentHeight;   // Total height of all rows
+    sf::View mTableView;        // Camera for the list
+    sf::FloatRect mTableBounds; // Visible area on screen
+    float mScrollY;             // Current scroll position
+    float mTotalContentHeight;  // Total height of all rows
 };
 #endif

@@ -3,16 +3,18 @@
 #define TYPE_HPP
 #include <string>
 
-class Type {
-   private:
+class Type
+{
+private:
     std::string id;
     std::string name;
 
-   public:
+public:
     Type() : id(""), name("") {}
     Type(std::string id, std::string name) : id(id), name(name) {}
     ~Type() {};
     std::string getId() const { return id; }
     std::string getName() const { return name; }
+    void setName(const std::string &newName) { name = newName; }
 };
-#endif  // TYPE_HPP
+#endif // TYPE_HPP

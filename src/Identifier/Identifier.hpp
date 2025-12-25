@@ -10,6 +10,8 @@ namespace States
         RecurringTransaction,
         Statistics,
         Management,
+        ManagementEdit,
+        AddType,
 
         None,
     };
@@ -34,7 +36,8 @@ namespace Textures
     {
 
         MenuBackground,
-        Frame,
+        Bin,
+        Edit,
         Add,
 
         ButtonBack,
