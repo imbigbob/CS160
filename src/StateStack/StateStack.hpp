@@ -2,7 +2,7 @@
 #define STATE_STACK_HPP
 
 #include <functional>
-
+#include <SFML/System/NonCopyable.hpp>
 #include "../State/State.hpp"
 
 class StateStack : private sf::NonCopyable {
