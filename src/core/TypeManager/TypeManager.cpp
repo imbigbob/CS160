@@ -29,11 +29,6 @@ TypeManager::TypeManager(std::string filepath)
         Type type(obj["id"].get<std::string>(), obj["name"].get<std::string>());
         types.pushBack(type);
     }
-    for (int i = 0; i < types.getSize(); i++)
-    {
-        std::cout << "Loaded type: " << types[i].getName() << std::endl;
-        std::cout << "With ID: " << types[i].getId() << std::endl;
-    }
 }
 bool TypeManager::addType(const Type &t)
 {
@@ -71,4 +66,22 @@ void TypeManager::updateDb()
 
     // Pretty print with 2-space indentation
     file << root.dump(2);
+}
+
+void TypeManager::removeTypeByIndex(int index)
+{
+    if (index < 0 || index >= types.getSize())
+        return;
+
+    types.removeAt(index);
+    updateDb();
+}
+
+void TypeManager::setNameByIndex(int index, const std::string newName)
+{
+    if (index < 0 || index >= types.getSize())
+        return;
+
+    types[index].setName(newName);
+    updateDb();
 }

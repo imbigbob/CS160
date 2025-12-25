@@ -4,40 +4,40 @@
 #include <SFML/Graphics.hpp>
 #include <memory>
 
-namespace GUI {
+namespace GUI
+{
 
-class Component : public sf::Drawable,
-                  public sf::Transformable,
-                  private sf::NonCopyable {
-   public:
-    typedef std::shared_ptr<Component> Ptr;
+    class Component : public sf::Drawable,
+                      public sf::Transformable,
+                      private sf::NonCopyable
+    {
+    public:
+        typedef std::shared_ptr<Component> Ptr;
 
-    Component();
-    virtual ~Component();
+        Component();
+        virtual ~Component();
 
-    virtual bool isSelectable() const = 0;
-    bool isSelected() const;
-    virtual void select();
-    virtual void deselect();
+        virtual bool isSelectable() const = 0;
+        bool isSelected() const;
+        virtual void select();
+        virtual void deselect();
 
-    virtual bool isActive() const;
-    virtual void activate();
-    virtual void deactivate();
+        virtual bool isActive() const;
+        virtual void activate();
+        virtual void deactivate();
 
-    virtual void handleMouseEvent(
-        const sf::Event& event, const sf::RenderWindow& window
-    ) = 0;
-    virtual void handleEvent(
-        const sf::Event& event, const sf::RenderWindow& window
-    ) = 0;
+        virtual void handleMouseEvent(
+            const sf::Event &event, const sf::RenderWindow &window) = 0;
+        virtual void handleEvent(
+            const sf::Event &event, const sf::RenderWindow &window) = 0;
 
-    virtual sf::FloatRect getGlobalBounds() const;
+        virtual sf::FloatRect getGlobalBounds() const;
 
-   private:
-    bool mIsSelected;
-    bool mIsActive;
-};
+    private:
+        bool mIsSelected;
+        bool mIsActive;
+    };
 
-}  // namespace GUI
+} // namespace GUI
 
 #endif

@@ -1,39 +1,41 @@
 #include "ManagementState.hpp"
-
-#include <algorithm>  // for std::max
+#include "../ManagementEditState/ManagementEditState.hpp"
+#include "../ManagementAddState/ManagementAddState.hpp"
+#include <algorithm> // for std::max
+#include <iostream>
 // Layout Constants
 const float TABLE_X = 200.f;
-const float TABLE_Y = 150.f;  // Header Y position
+const float TABLE_Y = 150.f; // Header Y position
 const float HEADER_HEIGHT = 40.f;
-const float ROW_HEIGHT = 40.f;
+const float ROW_HEIGHT = 60.f;
 
-ManagementState::ManagementState(StateStack& stack, Context context)
+ManagementState::ManagementState(StateStack &stack, Context context)
     : State(stack, context),
       currentMode(Mode::Income),
       mScrollY(0.f),
-      mTotalContentHeight(0.f) {
+      mTotalContentHeight(0.f)
+{
     sf::Vector2f windowSize(context.window->getSize());
-    sf::Texture& backgroundTexture =
+    sf::Texture &backgroundTexture =
         context.textureHolder->get(Textures::ID::MenuBackground);
 
     mBackgroundSprite.setTexture(backgroundTexture);
     mBackgroundSprite.setScale(
         windowSize.x / backgroundTexture.getSize().x,
-        windowSize.y / backgroundTexture.getSize().y
-    );
+        windowSize.y / backgroundTexture.getSize().y);
 
     // --- BUTTONS ---
     auto backButton = std::make_shared<GUI::Button>(
-        *context.fontHolder, *context.textureHolder, "Back"
-    );
+        *context.fontHolder, *context.textureHolder, "Back");
     backButton->setPosition(250.f, 50.f);
-    backButton->setCallback([this]() { requestStackPop(); });
+    backButton->setCallback([this]()
+                            { requestStackPop(); });
 
     modeSwitchButton = std::make_shared<GUI::Button>(
-        *context.fontHolder, *context.textureHolder, "Income"
-    );
+        *context.fontHolder, *context.textureHolder, "Income");
     modeSwitchButton->setPosition(450.f, 50.f);
-    modeSwitchButton->setCallback([this]() {
+    modeSwitchButton->setCallback([this]()
+                                  {
         // Rotate Mode
         if (currentMode == Mode::Income)
             currentMode = Mode::Expense;
@@ -50,16 +52,14 @@ ManagementState::ManagementState(StateStack& stack, Context context)
         else
             modeSwitchButton->setText("Wallet");
 
-        reloadTable();
-    });
+        reloadTable(); });
 
     addButton = std::make_shared<GUI::Button>(
-        *context.fontHolder, *context.textureHolder, "Add"
-    );
+        *context.fontHolder, *context.textureHolder, "Add");
     addButton->setPosition(700.f, 50.f);
-    addButton->setCallback([this]() {
-        // requestStackPush(States::ID::AddType);
-    });
+
+    addButton->setCallback([this]()
+                           { handleAdd(); });
 
     mGUIContainer.addComponent(backButton);
     mGUIContainer.addComponent(modeSwitchButton);
@@ -67,19 +67,22 @@ ManagementState::ManagementState(StateStack& stack, Context context)
 
     // --- TABLE HEADER SETUP ---
     // Column Widths: [0]=No., [1]=Name, [2]=ID (Optional)
-    float colWidth[] = {80.f, 300.f};
+    float colWidth[] = {
+        80.f,
+        300.f,
+        200.f};
 
     mTableHeader.setSize(
-        sf::Vector2f(colWidth[0] + colWidth[1], HEADER_HEIGHT)
-    );
+        sf::Vector2f(colWidth[0] + colWidth[1] + colWidth[2], HEADER_HEIGHT));
     mTableHeader.setPosition(TABLE_X, TABLE_Y);
     mTableHeader.setFillColor(sf::Color(230, 230, 230));
 
-    sf::Font& font = context.fontHolder->get(Fonts::ID::Dosis);
-    std::vector<std::string> headers = {"No.", "Name"};
+    sf::Font &font = context.fontHolder->get(Fonts::ID::Dosis);
+    std::vector<std::string> headers = {"No.", "Name", ""};
 
     float currentX = TABLE_X;
-    for (int i = 0; i < headers.size(); i++) {
+    for (int i = 0; i < headers.size(); i++)
+    {
         sf::Text text;
         text.setFont(font);
         text.setString(headers[i]);
@@ -103,8 +106,7 @@ ManagementState::ManagementState(StateStack& stack, Context context)
 
     mTableView.setSize(mTableBounds.width, mTableBounds.height);
     mTableView.setCenter(
-        mTableBounds.width / 2.f, listTopY + mTableBounds.height / 2.f
-    );
+        mTableBounds.width / 2.f, listTopY + mTableBounds.height / 2.f);
 
     // Map logic to screen pixels (Viewport)
     float viewportY = listTopY / windowSize.y;
@@ -115,14 +117,33 @@ ManagementState::ManagementState(StateStack& stack, Context context)
     reloadTable();
 }
 
-void ManagementState::reloadTable() {
+void ManagementState::handleAdd()
+{
+    ManagementAddState::setPayload(static_cast<int>(currentMode),
+                                   (currentMode == Mode::Income)
+                                       ? &incomeTypeManager
+                                   : (currentMode == Mode::Expense)
+                                       ? &expenseTypeManager
+                                       : &walletTypeManager);
+    requestStackPush(States::ID::ManagementAdd);
+}
+void ManagementState::reloadTable()
+{
+    for (int i = 0; i < incomeTypeManager.getAllTypes().getSize(); i++)
+    {
+        std::cout << "Income Type " << i << ": " << incomeTypeManager.getAllTypes()[i].getName() << std::endl;
+    }
     mRowRects.clear();
     mRowTexts.clear();
+    // Clear old icons
+    mEditSprites.clear();
+    mDeleteSprites.clear();
+
     mScrollY = 0.f;
     updateScrollView();
 
-    // Select the correct manager
-    TypeManager* manager = nullptr;
+    // Select manager (Same as your code)
+    TypeManager *manager = nullptr;
     if (currentMode == Mode::Income)
         manager = &incomeTypeManager;
     else if (currentMode == Mode::Expense)
@@ -130,53 +151,61 @@ void ManagementState::reloadTable() {
     else
         manager = &walletTypeManager;
 
-    auto& types = manager->getAllTypes();
+    auto &types = manager->getAllTypes();
 
     float tableX = TABLE_X;
-    float colWidth[] = {80.f, 300.f};
-
-    // Start drawing rows relative to where the View starts (below header)
+    float colWidth[] = {80.f, 300.f, 200.f}; // Added 3rd col width logic
     float currentY = TABLE_Y + HEADER_HEIGHT;
 
-    sf::Font& font = getContext().fontHolder->get(Fonts::ID::Dosis);
+    sf::Font &font = getContext().fontHolder->get(Fonts::ID::Dosis);
 
-    for (int i = 0; i < types.getSize(); i++) {
-        // --- 1. Background Row ---
+    // GET TEXTURES (Ensure you have these in your TextureHolder)
+    // If you don't have IDs yet, assume Textures::ID::EditIcon and Textures::ID::DeleteIcon
+    const sf::Texture &editTexture = getContext().textureHolder->get(Textures::ID::Edit);
+    const sf::Texture &deleteTexture = getContext().textureHolder->get(Textures::ID::Bin);
+
+    for (int i = 0; i < types.getSize(); i++)
+    {
+        // 1. Background Row (Same as your code)
         sf::RectangleShape rowRect;
-        rowRect.setSize(sf::Vector2f(colWidth[0] + colWidth[1], ROW_HEIGHT));
+        rowRect.setSize(sf::Vector2f(colWidth[0] + colWidth[1] + colWidth[2], ROW_HEIGHT));
         rowRect.setPosition(tableX, currentY);
-
-        // Alternating colors for readability
-        if (i % 2 == 0)
-            rowRect.setFillColor(sf::Color(250, 250, 250));
-        else
-            rowRect.setFillColor(sf::Color(240, 240, 240));
-
+        rowRect.setFillColor((i % 2 == 0) ? sf::Color(250, 250, 250) : sf::Color(240, 240, 240));
         mRowRects.push_back(rowRect);
 
-        // --- 2. Prepare Data ---
-        // Column 0: Order (1, 2, 3...)
+        // 2. Text Data (Same as your code)
         std::string orderStr = std::to_string(i + 1);
-        // Column 1: Name
         std::string nameStr = types[i].getName();
-        // Column 2: ID (Optional, assuming types have getID, or blank)
-        std::string idStr = "";  // types[i].getID();
+        std::vector<std::string> rowData = {orderStr, nameStr};
 
-        std::vector<std::string> rowData = {orderStr, nameStr, idStr};
-
-        // --- 3. Create Text ---
         float cx = tableX;
-        for (int col = 0; col < rowData.size(); col++) {
+        for (int col = 0; col < rowData.size(); col++)
+        {
             sf::Text t;
             t.setFont(font);
             t.setString(rowData[col]);
-            t.setCharacterSize(18);
+            t.setCharacterSize(25);
             t.setFillColor(sf::Color::Black);
             t.setPosition(cx + 10.f, currentY + 8.f);
-
             mRowTexts.push_back(t);
             cx += colWidth[col];
         }
+
+        // --- 3. ADD ICONS (Column 3) ---
+        // cx is now at the start of the 3rd column (approx X = 580)
+
+        // Setup Edit Icon
+        sf::Sprite editSprite(editTexture);
+        // Scale if texture is too big (optional, e.g., fit to 24x24)
+        // editSprite.setScale(24.f / editTexture.getSize().x, 24.f / editTexture.getSize().y);
+        editSprite.setPosition(cx + 10.f, currentY + 8.f);
+        mEditSprites.push_back(editSprite);
+
+        // Setup Delete Icon (Position it after Edit icon)
+        sf::Sprite delSprite(deleteTexture);
+        // delSprite.setScale(24.f / deleteTexture.getSize().x, 24.f / deleteTexture.getSize().y);
+        delSprite.setPosition(cx + 80.f, currentY + 8.f); // Offset x by 40-50px
+        mDeleteSprites.push_back(delSprite);
 
         currentY += ROW_HEIGHT;
     }
@@ -184,26 +213,68 @@ void ManagementState::reloadTable() {
     mTotalContentHeight = types.getSize() * ROW_HEIGHT;
 }
 
-bool ManagementState::handleEvent(const sf::Event& event) {
+bool ManagementState::handleEvent(const sf::Event &event)
+{
     mGUIContainer.handleEvent(event, *getContext().window);
+    sf::RenderWindow &window = *getContext().window;
 
-    // Handle Scrolling
-    if (event.type == sf::Event::MouseWheelScrolled) {
-        if (event.mouseWheelScroll.wheel == sf::Mouse::VerticalWheel) {
+    // Handle Scrolling (Same as your code)
+    if (event.type == sf::Event::MouseWheelScrolled)
+    {
+        if (event.mouseWheelScroll.wheel == sf::Mouse::VerticalWheel)
+        {
             float delta = event.mouseWheelScroll.delta;
-            mScrollY -= delta * 30.f;  // Scroll speed
+            mScrollY -= delta * 30.f;
             updateScrollView();
         }
     }
+
+    // --- HANDLE ICON CLICKS ---
+    if (event.type == sf::Event::MouseButtonPressed)
+    {
+        if (event.mouseButton.button == sf::Mouse::Left)
+        {
+            // 1. Get Mouse Position relative to the window
+            sf::Vector2i mousePosRaw = sf::Mouse::getPosition(window);
+
+            // 2. Convert to World Coordinates inside the Table View
+            // This accounts for the scroll position automatically!
+            sf::Vector2f mousePos = window.mapPixelToCoords(mousePosRaw, mTableView);
+
+            // 3. Check collisions with Edit Buttons
+            for (size_t i = 0; i < mEditSprites.size(); ++i)
+            {
+                if (mEditSprites[i].getGlobalBounds().contains(mousePos))
+                {
+                    handleEdit(i);
+                    return true; // Input handled
+                }
+            }
+
+            // 4. Check collisions with Delete Buttons
+            for (size_t i = 0; i < mDeleteSprites.size(); ++i)
+            {
+                if (mDeleteSprites[i].getGlobalBounds().contains(mousePos))
+                {
+                    handleDelete(i);
+                    return true; // Input handled
+                }
+            }
+        }
+    }
+
     return false;
 }
 
-void ManagementState::updateScrollView() {
+void ManagementState::updateScrollView()
+{
     float visibleHeight = mTableBounds.height;
-    if (mScrollY < 0.f) mScrollY = 0.f;
+    if (mScrollY < 0.f)
+        mScrollY = 0.f;
 
     float maxScroll = std::max(0.f, mTotalContentHeight - visibleHeight);
-    if (mScrollY > maxScroll) mScrollY = maxScroll;
+    if (mScrollY > maxScroll)
+        mScrollY = maxScroll;
 
     // Move the view center
     float listTopY = TABLE_Y + HEADER_HEIGHT;
@@ -211,25 +282,68 @@ void ManagementState::updateScrollView() {
     mTableView.setCenter(mTableBounds.width / 2.f, defaultCenterY + mScrollY);
 }
 
-bool ManagementState::update(sf::Time deltaTime) { return true; }
+bool ManagementState::update(sf::Time deltaTime)
+{
+    reloadTable();
+    return true;
+}
 
-void ManagementState::draw() {
-    sf::RenderWindow& window = *getContext().window;
+void ManagementState::draw()
+{
+    sf::RenderWindow &window = *getContext().window;
 
-    // 1. Standard View (Background + Headers + Buttons)
+    // 1. Standard View
     window.setView(window.getDefaultView());
     window.draw(mBackgroundSprite);
-
-    // Draw Header
     window.draw(mTableHeader);
-    for (auto& t : mHeaderTexts) window.draw(t);
+    for (auto &t : mHeaderTexts)
+        window.draw(t);
 
     // 2. Table View (Rows)
     window.setView(mTableView);
-    for (auto& r : mRowRects) window.draw(r);
-    for (auto& t : mRowTexts) window.draw(t);
 
-    // 3. Reset to Standard View for Buttons
+    for (auto &r : mRowRects)
+        window.draw(r);
+    for (auto &t : mRowTexts)
+        window.draw(t);
+
+    // --- DRAW ICONS ---
+    for (auto &s : mEditSprites)
+        window.draw(s);
+    for (auto &s : mDeleteSprites)
+        window.draw(s);
+
+    // 3. Reset to Standard View
     window.setView(window.getDefaultView());
     window.draw(mGUIContainer);
+}
+
+void ManagementState::handleEdit(int index)
+{
+    ManagementEditState::setPayload(index, static_cast<int>(currentMode),
+                                    (currentMode == Mode::Income)
+                                        ? &incomeTypeManager
+                                    : (currentMode == Mode::Expense)
+                                        ? &expenseTypeManager
+                                        : &walletTypeManager);
+    requestStackPush(States::ID::ManagementEdit);
+}
+
+void ManagementState::handleDelete(int index)
+{
+    // Select the correct manager
+    TypeManager *manager = nullptr;
+    if (currentMode == Mode::Income)
+        manager = &incomeTypeManager;
+    else if (currentMode == Mode::Expense)
+        manager = &expenseTypeManager;
+    else
+        manager = &walletTypeManager;
+
+    // Remove from manager
+    // Assuming your manager has a remove method taking an index or ID
+    manager->removeTypeByIndex(index);
+
+    // IMPORTANT: Refresh table immediately to update UI
+    reloadTable();
 }
