@@ -11,8 +11,8 @@
 
 // File path
 RecurringManager::RecurringManager() {
-    this->incomeFilepath = "data/RecurringIncomes.json";
-    this->expenseFilepath = "data/RecurringExpenses.json";
+    this->incomeFilepath = "data/IncomeRecurring.json";
+    this->expenseFilepath = "data/ExpenseRecurring.json";
 
     loadFromDB(incomeFilepath, incomeRules, 1);
     loadFromDB(expenseFilepath, expenseRules, 2);
