@@ -2,51 +2,58 @@
 
 #include "ExpenseManager.hpp"
 
-#include <json/json.h>
+#include <nlohmann/json.hpp>
+
+using json = nlohmann::json;
 
 #include <fstream>
 #include <iostream>
-ExpenseManager::ExpenseManager() {
+ExpenseManager::ExpenseManager()
+{
     std::ifstream file("data/ExpensesTransaction.json");
-    if (!file) {
+    if (!file)
+    {
         return;
     }
-    if (!file.is_open()) {
+    if (!file.is_open())
+    {
         list = DynamicArray<Expense>();
         return;
     }
-    Json::Value root;
-    Json::CharReaderBuilder reader;
+
+    json root;
+    file >> root;
     std::string errs;
 
-    if (!Json::parseFromStream(reader, file, &root, &errs)) {
-        throw std::runtime_error("Error parsing expenses.json: " + errs);
-    }
-
-    if (!root.isArray()) {
+    if (!root.is_array())
+    {
         throw std::runtime_error("Invalid JSON format: root is not an array");
     }
 
-    for (const auto& obj : root) {
+    for (const auto &obj : root)
+    {
         Expense expense;
-        if (obj.isMember("date")) expense.setDate(obj["date"].asString());
-        if (obj.isMember("id")) expense.setId(obj["id"].asString());
-        if (obj.isMember("categoryName"))
-            expense.setName(obj["categoryName"].asString());
-        if (obj.isMember("amount")) expense.setAmount(obj["amount"].asDouble());
+        if (obj.contains("date"))
+            expense.setDate(obj["date"].get<std::string>());
+        if (obj.contains("id"))
+            expense.setId(obj["id"].get<std::string>());
+        if (obj.contains("categoryName"))
+            expense.setName(obj["categoryName"].get<std::string>());
+        if (obj.contains("amount"))
+            expense.setAmount(obj["amount"].get<double>());
 
-        if (obj.isMember("walletId"))
-            expense.setWalletId(obj["walletId"].asString());
-        if (obj.isMember("walletName"))
-            expense.setWalletName(obj["walletName"].asString());
-        if (obj.isMember("description"))
-            expense.setDescription(obj["description"].asString());
-
+        if (obj.contains("walletId"))
+            expense.setWalletId(obj["walletId"].get<std::string>());
+        if (obj.contains("walletName"))
+            expense.setWalletName(obj["walletName"].get<std::string>());
+        if (obj.contains("description"))
+            expense.setDescription(obj["description"].get<std::string>());
         list.pushBack(expense);
     }
 }
 
-void ExpenseManager::add(const Expense& w) {
+void ExpenseManager::add(const Expense &w)
+{
     list.pushBack(w);
     updateDB();
     return;
@@ -55,34 +62,32 @@ void ExpenseManager::remove(int id) {}
 
 double ExpenseManager::getTotalBalance() { return 0; }
 
-DynamicArray<Expense>& ExpenseManager::getAll() { return list; }
+DynamicArray<Expense> &ExpenseManager::getAll() { return list; }
 
-void ExpenseManager::updateDB() {
-    Json::Value root(Json::arrayValue);
+void ExpenseManager::updateDB()
+{
+    json root = json::array();
 
     // Convert DynamicArray<Income> → Json::Value array
-    for (int i = 0; i < list.getSize(); i++) {
-        const Expense& expense = list[i];
-        Json::Value obj;
+    for (int i = 0; i < list.getSize(); i++)
+    {
+        const Expense &expense = list[i];
+        json obj;
         obj["date"] = expense.getDate();
         obj["id"] = expense.getId();
         obj["categoryName"] = expense.getName();
         obj["amount"] = expense.getAmount();
 
         obj["walletId"] = expense.getWalletId();
-        obj["walletName"] = "";  // Placeholder, as Wallet name is not in Income
+        obj["walletName"] = ""; // Placeholder, as Wallet name is not in Income
         obj["description"] = expense.getDescription();
 
-        root.append(obj);
+        root.push_back(obj);
     }
     // Write to file
     std::ofstream file("data/expenses.json");
-    if (!file) {
+    if (!file)
+    {
         throw std::runtime_error("Error opening expenses.json for writing");
     }
-
-    Json::StreamWriterBuilder writer;
-    writer["indentation"] = "  ";  // pretty print
-    std::unique_ptr<Json::StreamWriter> jsonWriter(writer.newStreamWriter());
-    jsonWriter->write(root, &file);
 }

@@ -1,57 +1,64 @@
 #ifndef IDENTIFIER_HPP
 #define IDENTIFIER_HPP
 
-namespace States {
-enum class ID {
-    Menu,
-    Transaction,
-    RecurringTransaction,
-    Statistics,
-    Management,
+namespace States
+{
+    enum class ID
+    {
+        Menu,
+        Transaction,
+        RecurringTransaction,
+        Statistics,
+        Management,
 
-    None,
-};
+        None,
+    };
 }
 
-namespace Directions {
-enum class ID {
-    Up,
-    Down,
-    Left,
-    Right,
-    DirectionCount,
-    None,
-};
+namespace Directions
+{
+    enum class ID
+    {
+        Up,
+        Down,
+        Left,
+        Right,
+        DirectionCount,
+        None,
+    };
 }
 
-namespace Textures {
-enum class ID {
+namespace Textures
+{
+    enum class ID
+    {
 
-    TitleBackground,
-    MenuBackground,
-    Frame,
-    Add,
+        MenuBackground,
+        Frame,
+        Add,
 
-    ButtonBack,
-    ButtonNormal,
-    ButtonSelected,
-    ButtonPressed,
-    LeftButtonNormal,
-    RightButtonNormal,
-    LeftButtonSelected,
-    RightButtonSelected,
+        ButtonBack,
+        ButtonNormal,
+        ButtonSelected,
+        ButtonPressed,
+        LeftButtonNormal,
+        RightButtonNormal,
+        LeftButtonSelected,
+        RightButtonSelected,
 
-    None,
-};
+        None,
+    };
 }
 
-namespace Fonts {
-enum class ID {
-    Dosis,
-    Pacifico,
-    VTV323,
-    Minecraft,
-};
+namespace Fonts
+{
+    enum class ID
+    {
+        Dosis,
+        Pacifico,
+        VTV323,
+        Minecraft,
+    };
 }
 
 #endif

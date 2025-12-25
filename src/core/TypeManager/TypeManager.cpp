@@ -1,41 +1,46 @@
 #include "TypeManager.hpp"
 
-#include <json/json.h>
+#include <nlohmann/json.hpp>
+
+using json = nlohmann::json;
 
 #include <fstream>
 #include <iostream>
-TypeManager::TypeManager(std::string filepath) {
+TypeManager::TypeManager(std::string filepath)
+{
     this->filepath = filepath;
     std::ifstream fin("data/" + filepath + ".json");
-    if (!fin.is_open()) {
+    if (!fin.is_open())
+    {
         types = DynamicArray<Type>();
         return;
     }
 
-    Json::Value root;
-    Json::CharReaderBuilder reader;
-    std::string errs;
+    json root;
+    fin >> root;
 
-    if (!Json::parseFromStream(reader, fin, &root, &errs)) {
-        throw std::runtime_error("Error parsing " + filepath + ": " + errs);
-    }
-
-    if (!root.isArray()) {
+    if (!root.is_array())
+    {
         throw std::runtime_error("Invalid JSON format: root is not an array");
     }
 
-    for (const auto& obj : root) {
-        Type type(obj["id"].asString(), obj["name"].asString());
+    for (const auto &obj : root)
+    {
+        Type type(obj["id"].get<std::string>(), obj["name"].get<std::string>());
         types.pushBack(type);
     }
-    for (int i = 0; i < types.getSize(); i++) {
+    for (int i = 0; i < types.getSize(); i++)
+    {
         std::cout << "Loaded type: " << types[i].getName() << std::endl;
         std::cout << "With ID: " << types[i].getId() << std::endl;
     }
 }
-bool TypeManager::addType(const Type& t) {
-    for (size_t i = 0; i < types.getSize(); ++i) {
-        if (types[i].getName().compare(t.getName()) == 0) {
+bool TypeManager::addType(const Type &t)
+{
+    for (size_t i = 0; i < types.getSize(); ++i)
+    {
+        if (types[i].getName().compare(t.getName()) == 0)
+        {
             return false;
         }
     }
@@ -43,27 +48,27 @@ bool TypeManager::addType(const Type& t) {
     updateDb();
     return true;
 }
-void TypeManager::updateDb() {
-    Json::Value root(Json::arrayValue);
+void TypeManager::updateDb()
+{
+    json root = json::array();
 
-    for (int i = 0; i < types.getSize(); i++) {
-        const Type& type = types[i];
-        Json::Value obj;
+    for (int i = 0; i < types.getSize(); i++)
+    {
+        const Type &type = types[i];
+        json obj;
         obj["id"] = type.getId();
         obj["name"] = type.getName();
 
-        root.append(obj);
+        root.push_back(obj);
     }
     // Write to file
     std::ofstream file("data/" + filepath + ".json");
-    if (!file) {
+    if (!file)
+    {
         throw std::runtime_error(
-            "Error opening " + filepath + ".json for writing"
-        );
+            "Error opening " + filepath + ".json for writing");
     }
 
-    Json::StreamWriterBuilder writer;
-    writer["indentation"] = "  ";  // pretty print
-    std::unique_ptr<Json::StreamWriter> jsonWriter(writer.newStreamWriter());
-    jsonWriter->write(root, &file);
+    // Pretty print with 2-space indentation
+    file << root.dump(2);
 }
