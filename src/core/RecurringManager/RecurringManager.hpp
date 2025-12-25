@@ -19,6 +19,7 @@ struct RecurringTransaction {
     std::string walletId;    
     std::string description; 
 
+    int day; // applying day
     std::string startDate;
     std::string endDate;  // "" means infinite
     std::string lastAppliedYM; // YYYY-MM
