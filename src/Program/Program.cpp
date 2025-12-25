@@ -7,6 +7,7 @@
 #include "../State/StatisticsState/StatisticsState.hpp"
 #include "../State/TransactionState/TransactionState.hpp"
 #include "../State/ManagementEditState/ManagementEditState.hpp"
+#include "../State/ManagementAddState/ManagementAddState.hpp"
 Program::Program()
     : mWindow(
           sf::VideoMode(Global::WINDOW_WIDTH, Global::WINDOW_HEIGHT),
@@ -96,6 +97,7 @@ void Program::registerStates()
     mStateStack.registerState<StatisticsState>(States::ID::Statistics);
     mStateStack.registerState<ManagementState>(States::ID::Management);
     mStateStack.registerState<ManagementEditState>(States::ID::ManagementEdit);
+    mStateStack.registerState<ManagementAddState>(States::ID::ManagementAdd);
 }
 
 void Program::handleEvent(sf::Event &event)

@@ -1,5 +1,6 @@
 #include "ManagementState.hpp"
 #include "../ManagementEditState/ManagementEditState.hpp"
+#include "../ManagementAddState/ManagementAddState.hpp"
 #include <algorithm> // for std::max
 #include <iostream>
 // Layout Constants
@@ -56,10 +57,9 @@ ManagementState::ManagementState(StateStack &stack, Context context)
     addButton = std::make_shared<GUI::Button>(
         *context.fontHolder, *context.textureHolder, "Add");
     addButton->setPosition(700.f, 50.f);
+
     addButton->setCallback([this]()
-                           {
-                               // requestStackPush(States::ID::AddType);
-                           });
+                           { handleAdd(); });
 
     mGUIContainer.addComponent(backButton);
     mGUIContainer.addComponent(modeSwitchButton);
@@ -117,6 +117,16 @@ ManagementState::ManagementState(StateStack &stack, Context context)
     reloadTable();
 }
 
+void ManagementState::handleAdd()
+{
+    ManagementAddState::setPayload(static_cast<int>(currentMode),
+                                   (currentMode == Mode::Income)
+                                       ? &incomeTypeManager
+                                   : (currentMode == Mode::Expense)
+                                       ? &expenseTypeManager
+                                       : &walletTypeManager);
+    requestStackPush(States::ID::ManagementAdd);
+}
 void ManagementState::reloadTable()
 {
     for (int i = 0; i < incomeTypeManager.getAllTypes().getSize(); i++)

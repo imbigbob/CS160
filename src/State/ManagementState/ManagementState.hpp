@@ -24,6 +24,7 @@ private:
     void updateScrollView();
     void handleEdit(int index);
     void handleDelete(int index);
+    void handleAdd();
 
 private:
     enum class Mode

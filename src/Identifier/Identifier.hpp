@@ -11,7 +11,7 @@ namespace States
         Statistics,
         Management,
         ManagementEdit,
-        AddType,
+        ManagementAdd,
 
         None,
     };
