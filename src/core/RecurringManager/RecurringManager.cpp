@@ -48,6 +48,7 @@ std::string RecurringManager::getCurrentYM() {
     return ss.str();
 }
 
+// Read from json file
 void RecurringManager::loadFromDB(const std::string& filepath, DynamicArray<RecurringTransaction>& list, int typeTransaction) {
 
     // Json read stuff
@@ -80,6 +81,7 @@ void RecurringManager::loadFromDB(const std::string& filepath, DynamicArray<Recu
     file.close();
 }
 
+// Write to json file
 void RecurringManager::updateDB(const std::string& filepath, DynamicArray<RecurringTransaction>& list) {
 
     // Json write stuff
@@ -91,8 +93,7 @@ void RecurringManager::updateDB(const std::string& filepath, DynamicArray<Recurr
     for (int i = 0; i < list.getSize(); i++) {
         RecurringTransaction& r = list[i];
         Json::Value obj;
-        // Không cần lưu isIncome nữa vì tên file đã nói lên tất cả
-        // Nhưng lưu dư cũng không sao
+
         obj["amount"] = r.amount;
         obj["categoryId"] = r.categoryId;
         obj["categoryName"] = r.categoryName;
@@ -108,4 +109,74 @@ void RecurringManager::updateDB(const std::string& filepath, DynamicArray<Recurr
     file.close();
 }
 
+// Main
+void RecurringManager::processRecurring(IncomeManager& im, ExpenseManager& em) {
+    
+    // Get current YYYY-MM
+    std::string currentMonth = getCurrentYM();
+    
+    // Get current DD
+    time_t t = time(nullptr);
+    tm* now = localtime(&t);
+    int currentDay = now->tm_mday;
+    
+    // Get the current YYYY-MM-DD
+    std::stringstream dateSS;
+    dateSS << (now->tm_year + 1900) << "-" 
+           << std::setw(2) << std::setfill('0') << (now->tm_mon + 1) << "-"
+           << std::setw(2) << std::setfill('0') << currentDay;
+    std::string todayDate = dateSS.str();
+
+    bool incomeChanged = false;
+    bool expenseChanged = false;
+
+    // Income recurring
+    for (int i = 0; i < incomeRules.getSize(); ++i) {
+        RecurringTransaction& rule = incomeRules[i];
+        if (rule.lastAppliedYM == currentMonth) continue;
+        if (currentDay < rule.day) continue;
+
+        // Income profile
+        Income inc;
+        inc.setDate(todayDate);
+        inc.setAmount(rule.amount);
+        inc.setId(rule.categoryId);
+        inc.setName(rule.categoryName);
+        inc.setWalletId(rule.walletId);
+        inc.setDescription(rule.description + " [Auto Rec]");
+        
+        im.add(inc); // from IncomeManager
+
+
+        rule.lastAppliedYM = currentMonth;
+        incomeChanged = true;
+        std::cout << ">> [Auto Income] Created: " << rule.description << "\n";
+    }
+
+    // Expense recurring
+    for (int i = 0; i < expenseRules.getSize(); ++i) {
+        RecurringTransaction& rule = expenseRules[i];
+        if (rule.lastAppliedYM == currentMonth) continue;
+        if (currentDay < rule.day) continue;
+
+        // Expense profile
+        Expense exp;
+        exp.setDate(todayDate);
+        exp.setAmount(rule.amount);
+        exp.setId(rule.categoryId);
+        exp.setName(rule.categoryName);
+        exp.setWalletId(rule.walletId);
+        exp.setDescription(rule.description + " [Auto Rec]");
+
+        em.add(exp); // from ExpenseManager
+
+        rule.lastAppliedYM = currentMonth;
+        expenseChanged = true;
+        std::cout << ">> [Auto Expense] Created: " << rule.description << "\n";
+    }
+
+    // Lưu riêng từng file nếu có thay đổi
+    if (incomeChanged) updateDB(incomeFilepath, incomeRules);
+    if (expenseChanged) updateDB(expenseFilepath, expenseRules);
+}
 
