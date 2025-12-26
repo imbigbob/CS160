@@ -27,7 +27,6 @@ private:
     TypeManager *mTypeManager;
 
     GUI::Container mGUIContainer;
-    sf::Sprite mBackgroundSprite;
 
     std::shared_ptr<GUI::InputBox> mInputBox;
 

@@ -21,13 +21,6 @@ ManagementAddState::ManagementAddState(StateStack &stack, Context context)
     sf::RenderWindow &window = *context.window;
     sf::Vector2f windowSize(window.getSize());
 
-    // 2. Setup Background
-    sf::Texture &backgroundTexture = context.textureHolder->get(Textures::ID::MenuBackground);
-    mBackgroundSprite.setTexture(backgroundTexture);
-    mBackgroundSprite.setScale(
-        windowSize.x / backgroundTexture.getSize().x,
-        windowSize.y / backgroundTexture.getSize().y);
-
     // --- 3. GUI SETUP ---
 
     // A. Create Label
@@ -70,7 +63,11 @@ void ManagementAddState::draw()
     sf::RenderWindow &window = *getContext().window;
     window.setView(window.getDefaultView());
 
-    window.draw(mBackgroundSprite);
+    sf::RectangleShape backgroundShape;
+    backgroundShape.setFillColor(sf::Color(0, 0, 0, 150));
+    backgroundShape.setSize(window.getView().getSize());
+
+    window.draw(backgroundShape);
 
     // This draws the Label, InputBox, and Buttons all at once
     window.draw(mGUIContainer);

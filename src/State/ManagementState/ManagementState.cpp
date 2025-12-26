@@ -17,7 +17,7 @@ ManagementState::ManagementState(StateStack &stack, Context context)
 {
     sf::Vector2f windowSize(context.window->getSize());
     sf::Texture &backgroundTexture =
-        context.textureHolder->get(Textures::ID::MenuBackground);
+        context.textureHolder->get(Textures::ID::ManagementBackground);
 
     mBackgroundSprite.setTexture(backgroundTexture);
     mBackgroundSprite.setScale(

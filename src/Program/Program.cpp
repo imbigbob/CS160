@@ -57,6 +57,11 @@ void Program::loadTextures()
 {
     mTextureHolder.load(
         Textures::ID::MenuBackground, "assets/Textures/MenuBackground.jpg");
+    mTextureHolder.load(
+        Textures::ID::StatBackground, "assets/Textures/StatBackground.jpg");
+    mTextureHolder.load(
+        Textures::ID::ManagementBackground,
+        "assets/Textures/ManagementBackground.jpg");
     mTextureHolder.load(Textures::ID::Bin, "assets/Textures/Bin.png");
     mTextureHolder.load(Textures::ID::Edit, "assets/Textures/Edit.png");
 

@@ -36,6 +36,8 @@ namespace Textures
     {
 
         MenuBackground,
+        StatBackground,
+        ManagementBackground,
         Bin,
         Edit,
         Add,

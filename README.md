@@ -13,4 +13,7 @@ git pull origin main
 git checkout feature/new-feature
 git merge main
 ## Create pull request
-# Go to your repository on GitHub, navigate to the "Pull requests" tab, and click "New pull request". Select your feature branch and create the pull request.
+## Go to your repository on GitHub, navigate to the "Pull requests" tab, and click "New pull request". Select your feature branch and create the pull request.
+
+## Run project
+cd build && cmake .. && make && cd .. && ./CSG

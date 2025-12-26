@@ -25,13 +25,6 @@ ManagementEditState::ManagementEditState(StateStack &stack, Context context)
     sf::RenderWindow &window = *context.window;
     sf::Vector2f windowSize(window.getSize());
 
-    // 2. Setup Background
-    sf::Texture &backgroundTexture = context.textureHolder->get(Textures::ID::MenuBackground);
-    mBackgroundSprite.setTexture(backgroundTexture);
-    mBackgroundSprite.setScale(
-        windowSize.x / backgroundTexture.getSize().x,
-        windowSize.y / backgroundTexture.getSize().y);
-
     // --- 3. GUI SETUP ---
 
     // A. Create Label
@@ -74,15 +67,17 @@ ManagementEditState::ManagementEditState(StateStack &stack, Context context)
                                   requestStackPop(); // Just go back
                               });
     mGUIContainer.addComponent(cancelButton);
-    std::cout << "first: " << mEditingIndex << std::endl;
 }
 
 void ManagementEditState::draw()
 {
     sf::RenderWindow &window = *getContext().window;
     window.setView(window.getDefaultView());
+    sf::RectangleShape backgroundShape;
+    backgroundShape.setFillColor(sf::Color(0, 0, 0, 150));
+    backgroundShape.setSize(window.getView().getSize());
 
-    window.draw(mBackgroundSprite);
+    window.draw(backgroundShape);
 
     // This draws the Label, InputBox, and Buttons all at once
     window.draw(mGUIContainer);
