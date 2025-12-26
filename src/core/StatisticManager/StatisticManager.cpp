@@ -1,46 +1,61 @@
 #include "StatisticManager.hpp"
-StatisticManager::StatisticManager(IncomeManager& im, ExpenseManager& em)
-    : incomeManager(im), expenseManager(em) {}
+#include "core/DynamicArray/DynamicArray.hpp"
+#include <ctime>
+std::string StatisticManager::setDate()
+{
+    // Get current date as "YYYY-MM-DD"
+    std::time_t t = std::time(nullptr);
+    std::tm *tmPtr = std::localtime(&t);
 
-double StatisticManager::getTotalIncome() { return 0.0; }
+    char buffer[11];
+    std::strftime(buffer, sizeof(buffer), "%Y-%m-%d", tmPtr);
 
-double StatisticManager::getTotalExpense() { return 0.0; }
-double StatisticManager::getNetBalance() { return 0.0; }
+    return std::string(buffer);
+}
 
+double StatisticManager::getTotalIncome()
+{
+
+    return incomeManager.getTotalBalance();
+}
+
+double StatisticManager::getTotalExpense() { return expenseManager.getTotalBalance(); }
+double StatisticManager::getNetBalance() { return incomeManager.getTotalBalance() - expenseManager.getTotalBalance(); }
 double StatisticManager::getIncomeInTimeRange(
-    const std::string& start, const std::string& end
-) {
-    return 0.0;
+    const std::string &start, const std::string &end)
+{
+    return incomeManager.getBalanceInTimeRange(start, end);
 }
 
 double StatisticManager::getExpenseInTimeRange(
-    const std::string& start, const std::string& end
-) {
-    return 0.0;
+    const std::string &start, const std::string &end)
+{
+    return expenseManager.getBalanceInTimeRange(start, end);
 }
 
 double StatisticManager::getNetBalanceInTimeRange(
-    const std::string& start, const std::string& end
-) {
-    return 0.0;
+    const std::string &start, const std::string &end)
+{
+    return incomeManager.getBalanceInTimeRange(start, end) - expenseManager.getBalanceInTimeRange(start, end);
 }
 
-double StatisticManager::annualIncomeOverview(std::vector<int> year) {
-    return 0.0;
+double StatisticManager::annualIncomeOverview(DynamicArray<int> year)
+{
+    return incomeManager.anualIncomeOverview(year);
 }
-
-double StatisticManager::annualExpenseOverview(std::vector<int> year) {
-    return 0.0;
+double StatisticManager::annualExpenseOverview(DynamicArray<int> year)
+{
+    return expenseManager.anualExpenseOverview(year);
 }
 
 double StatisticManager::annualIncomeBreakdownBySource(
-    std::vector<int> year, const std::string& sourceName
-) {
-    return 0.0;
+    DynamicArray<int> year, const std::string &sourceName)
+{
+    return incomeManager.incomeBreakdownBySource(year, sourceName);
 }
 
 double StatisticManager::annualExpenseBreakdownByCategory(
-    std::vector<int> year, const std::string& categoryName
-) {
-    return 0.0;
+    DynamicArray<int> year, const std::string &categoryName)
+{
+    return expenseManager.expenseBreakdownByCategory(year, categoryName);
 }

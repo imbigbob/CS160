@@ -10,10 +10,10 @@ public:
     Income() : Transaction() {}
 
     Income(
-        std::string date, std::string name, double amount,
+        std::string name, double amount,
         std::string walletId, std::string walletName, std::string description)
         : Transaction(
-              date, name, amount, walletId, walletName, description) {}
+              name, amount, walletId, walletName, description) {}
 
     int getType() const override { return 2; }
 };

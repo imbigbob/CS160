@@ -3,6 +3,16 @@
 #include <ctime>
 
 std::string Transaction::getDate() const { return date; }
+std::string Transaction::initialDate()
+{
+    // Get current date as "YYYY-MM-DD"
+    std::time_t t = std::time(nullptr);
+    std::tm *tmPtr = std::localtime(&t);
+
+    char buffer[11];
+    std::strftime(buffer, sizeof(buffer), "%Y-%m-%d", tmPtr);
+    return std::string(buffer);
+}
 std::string Transaction::formatId()
 {
     // Simple example: use current timestamp as ID

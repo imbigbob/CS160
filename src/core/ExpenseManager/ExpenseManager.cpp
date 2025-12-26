@@ -60,7 +60,15 @@ void ExpenseManager::add(const Expense &w)
 }
 void ExpenseManager::remove(int id) {}
 
-double ExpenseManager::getTotalBalance() { return 0; }
+double ExpenseManager::getTotalBalance()
+{
+    double total = 0.0;
+    for (int i = 0; i < list.getSize(); i++)
+    {
+        total += list[i].getAmount();
+    }
+    return total;
+}
 
 DynamicArray<Expense> &ExpenseManager::getAll() { return list; }
 
@@ -85,9 +93,89 @@ void ExpenseManager::updateDB()
         root.push_back(obj);
     }
     // Write to file
-    std::ofstream file("data/expenses.json");
+    std::ofstream file("data/ExpensesTransaction.json");
     if (!file)
     {
-        throw std::runtime_error("Error opening expenses.json for writing");
+        throw std::runtime_error("Error opening data/ExpensesTransaction.json for writing");
     }
+}
+
+double ExpenseManager::getBalanceInTimeRange(std::string start, std::string end)
+{
+    double totalBalance = 0.0;
+
+    // Loop through the DynamicArray
+    for (int i = 0; i < list.getSize(); ++i)
+    {
+        // 1. Get the current income object
+        const Expense &currentExpense = list[i];
+
+        // 2. Get the date string (e.g., "2024-06-01")
+        std::string expenseDate = currentExpense.getDate();
+
+        // 3. String comparison works for YYYY-MM-DD format
+        // Check if date is >= start AND <= end
+        if (expenseDate >= start && expenseDate <= end)
+        {
+            totalBalance += currentExpense.getAmount();
+        }
+    }
+
+    // Return as int (or change function signature to return double)
+    return totalBalance;
+}
+
+double ExpenseManager::anualExpenseOverview(DynamicArray<int> year)
+{
+    double totalExpense = 0.0;
+
+    // 1. Loop through the list of years you want to check (e.g., 2023, 2024)
+    for (int i = 0; i < year.getSize(); ++i)
+    {
+        int targetYear = year[i];
+        std::string targetYearStr = std::to_string(targetYear);
+
+        // 2. Loop through all income entries to find matches
+        for (int j = 0; j < list.getSize(); ++j)
+        {
+            std::string incomeDate = list[j].getDate(); // Returns "YYYY-MM-DD"
+
+            // 3. Check if the date has enough characters and matches the year
+            // substr(0, 4) extracts the first 4 chars (The Year)
+            if (incomeDate.length() >= 4 && incomeDate.substr(0, 4) == targetYearStr)
+            {
+                totalExpense += list[j].getAmount();
+            }
+        }
+    }
+
+    return totalExpense;
+}
+
+double ExpenseManager::expenseBreakdownByCategory(DynamicArray<int> year, const std::string &categoryName)
+{
+    double totalExpense = 0.0;
+
+    // 1. Loop through the list of years you want to check (e.g., 2023, 2024)
+    for (int i = 0; i < year.getSize(); ++i)
+    {
+        int targetYear = year[i];
+        std::string targetYearStr = std::to_string(targetYear);
+
+        // 2. Loop through all expense entries to find matches
+        for (int j = 0; j < list.getSize(); ++j)
+        {
+            std::string expenseDate = list[j].getDate(); // Returns "YYYY-MM-DD"
+
+            // 3. Check if the date has enough characters and matches the year
+            // substr(0, 4) extracts the first 4 chars (The Year)
+            if (expenseDate.length() >= 4 && expenseDate.substr(0, 4) == targetYearStr &&
+                list[j].getName() == categoryName)
+            {
+                totalExpense += list[j].getAmount();
+            }
+        }
+    }
+
+    return totalExpense;
 }

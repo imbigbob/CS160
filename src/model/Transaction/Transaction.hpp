@@ -16,17 +16,32 @@ protected:
 
 private:
     std::string formatId();
+    std::string initialDate();
 
 public:
     Transaction()
         : id(""), amount(0.0), date(""), walletId(""), description("") {}
 
     Transaction(
-        std::string date, std::string name, double amount,
+        std::string name, double amount,
         std::string walletId, std::string walletName, std::string description)
     {
-        this->date = date;
+        this->date = initialDate();
         this->id = formatId();
+        this->name = name;
+        this->amount = amount;
+        this->walletId = walletId;
+        this->walletName = walletName;
+        this->description = description;
+    }
+
+    Transaction(
+        std::string date, std::string id, std::string name, double amount,
+        std::string walletId, std::string walletName, std::string description)
+    {
+
+        this->date = date;
+        this->id = id;
         this->name = name;
         this->amount = amount;
         this->walletId = walletId;

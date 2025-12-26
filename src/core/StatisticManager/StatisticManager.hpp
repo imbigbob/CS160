@@ -6,37 +6,41 @@
 
 #include "core/ExpenseManager/ExpenseManager.hpp"
 #include "core/IncomeManager/IncomeManager.hpp"
-class StatisticManager {
-   private:
+#include "core/DynamicArray/DynamicArray.hpp"
+#include <ctime>
+class StatisticManager
+{
+private:
     IncomeManager incomeManager;
     ExpenseManager expenseManager;
-    std::string startDate;  // dd/mm/yyyy
-    std::string endDate;    // dd/mm/yyyy
+    std::string startDate; // dd/mm/yyyy
+    std::string endDate;   // dd/mm/yyyy
 
-   public:
-    StatisticManager(
-        IncomeManager& im, ExpenseManager& em
-    );  // assign the date open app or the first date in this month
+public:
+    std::string setDate();
+    StatisticManager()
+    {
+        incomeManager = IncomeManager();
+        expenseManager = ExpenseManager();
+        startDate = "01/01/2023";
+        endDate = setDate();
+    }; // assign the date open app or the first date in this month
+
     double getTotalIncome();
 
     double getTotalExpense();
     double getNetBalance();
     double getIncomeInTimeRange(
-        const std::string& start, const std::string& end
-    );
+        const std::string &start, const std::string &end);
     double getExpenseInTimeRange(
-        const std::string& start, const std::string& end
-    );
+        const std::string &start, const std::string &end);
     double getNetBalanceInTimeRange(
-        const std::string& start, const std::string& end
-    );
-    double annualIncomeOverview(std::vector<int> year);
-    double annualExpenseOverview(std::vector<int> year);
+        const std::string &start, const std::string &end);
+    double annualIncomeOverview(DynamicArray<int> year);
+    double annualExpenseOverview(DynamicArray<int> year);
     double annualIncomeBreakdownBySource(
-        std::vector<int> year, const std::string& sourceName
-    );
+        DynamicArray<int> year, const std::string &sourceName);
     double annualExpenseBreakdownByCategory(
-        std::vector<int> year, const std::string& categoryName
-    );
+        DynamicArray<int> year, const std::string &categoryName);
 };
 #endif
