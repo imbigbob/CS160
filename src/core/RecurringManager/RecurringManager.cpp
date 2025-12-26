@@ -4,7 +4,7 @@
 #include <sstream>
 #include <ctime>
 #include <iomanip>
-#include <json/json.h>
+#include <nlohmann/json.hpp>
 
 #include "model/Income/Income.hpp"
 #include "model/Expense/Expense.hpp"
@@ -26,10 +26,14 @@ void RecurringManager::addRule(const RecurringTransaction& rule) {
         case 1: {
             incomeRules.pushBack(rule);
             updateDB(incomeFilepath, incomeRules);
+
+            return;
         }
         case 2: {
             expenseRules.pushBack(rule);
-            updateDB(incomeFilepath, expenseRules);           
+            updateDB(expenseFilepath, expenseRules);         
+
+            return;
         }
     }
 }
@@ -49,53 +53,65 @@ std::string RecurringManager::getCurrentYM() {
 }
 
 // Read from json file
-void RecurringManager::loadFromDB(const std::string& filepath, DynamicArray<RecurringTransaction>& list, int typeTransaction) {
-
-    // Json read stuff
+void RecurringManager::loadFromDB(const std::string& filepath,
+                                  DynamicArray<RecurringTransaction>& list,
+                                  int typeTransaction) {
     std::ifstream file(filepath);
     if (!file.is_open()) return;
 
-    Json::Value root;
-    Json::CharReaderBuilder reader;
-    std::string errs;
+    nlohmann::json root;
+    try {
+        file >> root;
+    } catch (...) {
+        return;
+    }
 
-    if (!Json::parseFromStream(reader, file, &root, &errs)) return;
+    if (!root.is_array()) return;
 
     for (const auto& obj : root) {
-
-        // Define type of transaction
         RecurringTransaction r;
-        r.type = typeTransaction; 
+        r.type = typeTransaction;
 
-        if (obj.isMember("amount")) r.amount = obj["amount"].asDouble();
-        if (obj.isMember("categoryId")) r.categoryId = obj["categoryId"].asString();
-        if (obj.isMember("categoryName")) r.categoryName = obj["categoryName"].asString();
-        if (obj.isMember("walletId")) r.walletId = obj["walletId"].asString();
-        if (obj.isMember("description")) r.description = obj["description"].asString();
-        if (obj.isMember("day")) r.day = obj["day"].asInt();
-        if (obj.isMember("startDate")) r.startDate = obj["startDate"].asString();
-        if (obj.isMember("endDate")) r.endDate = obj["endDate"].asString();
-        if (obj.isMember("lastAppliedYM")) r.lastAppliedYM = obj["lastAppliedYM"].asString();
+        if (obj.contains("amount") && obj["amount"].is_number())
+            r.amount = obj["amount"].get<double>();
+
+        if (obj.contains("categoryId") && obj["categoryId"].is_string())
+            r.categoryId = obj["categoryId"].get<std::string>();
+
+        if (obj.contains("categoryName") && obj["categoryName"].is_string())
+            r.categoryName = obj["categoryName"].get<std::string>();
+
+        if (obj.contains("walletId") && obj["walletId"].is_string())
+            r.walletId = obj["walletId"].get<std::string>();
+
+        if (obj.contains("description") && obj["description"].is_string())
+            r.description = obj["description"].get<std::string>();
+
+        if (obj.contains("day") && obj["day"].is_number_integer())
+            r.day = obj["day"].get<int>();
+
+        if (obj.contains("startDate") && obj["startDate"].is_string())
+            r.startDate = obj["startDate"].get<std::string>();
+
+        if (obj.contains("endDate") && obj["endDate"].is_string())
+            r.endDate = obj["endDate"].get<std::string>();
+
+        if (obj.contains("lastAppliedYM") && obj["lastAppliedYM"].is_string())
+            r.lastAppliedYM = obj["lastAppliedYM"].get<std::string>();
 
         list.pushBack(r);
     }
-
-    file.close();
 }
 
 // Write to json file
-void RecurringManager::updateDB(const std::string& filepath, DynamicArray<RecurringTransaction>& list) {
-
-    // Json write stuff
-    std::ofstream file(filepath);
-    if (!file.is_open()) return;
-
-    Json::Value root(Json::arrayValue);
+void RecurringManager::updateDB(const std::string& filepath,
+                                DynamicArray<RecurringTransaction>& list) {
+    nlohmann::json root = nlohmann::json::array();
 
     for (int i = 0; i < list.getSize(); i++) {
         RecurringTransaction& r = list[i];
-        Json::Value obj;
 
+        nlohmann::json obj;
         obj["amount"] = r.amount;
         obj["categoryId"] = r.categoryId;
         obj["categoryName"] = r.categoryName;
@@ -106,11 +122,17 @@ void RecurringManager::updateDB(const std::string& filepath, DynamicArray<Recurr
         obj["endDate"] = r.endDate;
         obj["lastAppliedYM"] = r.lastAppliedYM;
 
-        root.append(obj);
+        root.push_back(obj);
     }
 
-    file << root;
-    file.close();
+    std::ofstream file(filepath);
+    if (!file.is_open()) return;
+
+    try {
+        file << root.dump(4);
+    } catch (...) {
+        return;
+    }
 }
 
 // Main
