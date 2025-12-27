@@ -3,11 +3,14 @@
 #include "../Global/Global.hpp"
 #include "../State/ManagementState/ManagementState.hpp"
 #include "../State/MenuState/MenuState.hpp"
-#include "../State/RecurringTransactionState/RecurringTransactionState.hpp"
+#include "../State/RecurringState/RecurringState.hpp"
+#include "../State/RecurringEditState/RecurringEditState.hpp"
+#include "../State/RecurringAddState/RecurringAddState.hpp"
 #include "../State/StatisticsState/StatisticsState.hpp"
 #include "../State/TransactionState/TransactionState.hpp"
 #include "../State/ManagementEditState/ManagementEditState.hpp"
 #include "../State/ManagementAddState/ManagementAddState.hpp"
+#include "../State/WarningState/WarningState.hpp"
 Program::Program()
     : mWindow(
           sf::VideoMode(Global::WINDOW_WIDTH, Global::WINDOW_HEIGHT),
@@ -97,12 +100,15 @@ void Program::registerStates()
 {
     mStateStack.registerState<MenuState>(States::ID::Menu);
     mStateStack.registerState<TransactionState>(States::ID::Transaction);
-    mStateStack.registerState<RecurringTransactionState>(
-        States::ID::RecurringTransaction);
+    mStateStack.registerState<RecurringState>(States::ID::Recurring);
+    mStateStack.registerState<RecurringEditState>(States::ID::RecurringEdit);
+    mStateStack.registerState<RecurringAddState>(States::ID::RecurringAdd);
+
     mStateStack.registerState<StatisticsState>(States::ID::Statistics);
     mStateStack.registerState<ManagementState>(States::ID::Management);
     mStateStack.registerState<ManagementEditState>(States::ID::ManagementEdit);
     mStateStack.registerState<ManagementAddState>(States::ID::ManagementAdd);
+    mStateStack.registerState<WarningState>(States::ID::Warning);
 }
 
 void Program::handleEvent(sf::Event &event)

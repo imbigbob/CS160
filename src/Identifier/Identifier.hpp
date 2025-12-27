@@ -7,11 +7,14 @@ namespace States
     {
         Menu,
         Transaction,
-        RecurringTransaction,
+        Recurring,
+        RecurringEdit,
+        RecurringAdd,
         Statistics,
         Management,
         ManagementEdit,
         ManagementAdd,
+        Warning,
 
         None,
     };

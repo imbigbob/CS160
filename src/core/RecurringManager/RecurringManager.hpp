@@ -44,8 +44,8 @@ public:
     RecurringManager();
     void addRule(const RecurringTransaction &rule);
     void processRecurring();
-    DynamicArray<RecurringTransaction> &getIncomes();
-    DynamicArray<RecurringTransaction> &getExpenses();
+    DynamicArray<RecurringTransaction> &getIncomes() { return incomeRules; };
+    DynamicArray<RecurringTransaction> &getExpenses() { return expenseRules; };
 };
 
 #endif
