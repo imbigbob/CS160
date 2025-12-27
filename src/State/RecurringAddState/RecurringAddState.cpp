@@ -5,9 +5,11 @@
 #include <iostream>
 
 DynamicArray<RecurringTransaction> *RecurringAddState::sData = nullptr;
+int RecurringAddState::sIndex = -1;
 
-void RecurringAddState::setPayload(DynamicArray<RecurringTransaction> *data)
+void RecurringAddState::setPayload(int index, DynamicArray<RecurringTransaction> *data)
 {
+    sIndex = index;
     sData = data;
 }
 
@@ -15,6 +17,7 @@ RecurringAddState::RecurringAddState(StateStack &stack, Context context)
     : State(stack, context)
 {
     mData = sData;
+    mIndex = sIndex;
 
     sf::Vector2f center(
         context.window->getSize().x / 2.f,
@@ -22,7 +25,7 @@ RecurringAddState::RecurringAddState(StateStack &stack, Context context)
 
     const float startY = center.y - 180.f;
     const float gapY = 45.f;
-    const float startX = center.x - 300.f;
+    const float startX = center.x - 350.f;
 
     auto addField = [&](const std::string &label, float y)
     {
@@ -46,27 +49,30 @@ RecurringAddState::RecurringAddState(StateStack &stack, Context context)
     addField("Wallet ID:", startY + gapY);
     mWalletBox = addBox(startY + gapY);
 
-    addField("Description:", startY + gapY * 2);
-    mDescBox = addBox(startY + gapY * 2);
+    addField("Type ID:", startY + gapY * 2);
+    mTypeBox = addBox(startY + gapY * 2);
 
-    addField("Day:", startY + gapY * 3);
-    mDayBox = addBox(startY + gapY * 3);
+    addField("Description:", startY + gapY * 3);
+    mDescBox = addBox(startY + gapY * 3);
 
-    addField("Start Date:", startY + gapY * 4);
-    mStartBox = addBox(startY + gapY * 4);
+    addField("Day:", startY + gapY * 4);
+    mDayBox = addBox(startY + gapY * 4);
 
-    addField("End Date:", startY + gapY * 5);
-    mEndBox = addBox(startY + gapY * 5);
+    addField("Start Date:", startY + gapY * 5);
+    mStartBox = addBox(startY + gapY * 5);
+
+    addField("End Date:", startY + gapY * 6);
+    mEndBox = addBox(startY + gapY * 6);
 
     auto saveBtn = std::make_shared<GUI::Button>(
         *context.fontHolder, *context.textureHolder, "Save");
-    saveBtn->setPosition(center.x - 110.f, startY + gapY * 6 + 50.f);
+    saveBtn->setPosition(center.x - 110.f, startY + gapY * 7 + 50.f);
     saveBtn->setCallback([this]()
                          { save(); });
 
     auto cancelBtn = std::make_shared<GUI::Button>(
         *context.fontHolder, *context.textureHolder, "Cancel");
-    cancelBtn->setPosition(center.x + 110.f, startY + gapY * 6 + 50.f);
+    cancelBtn->setPosition(center.x + 110.f, startY + gapY * 7 + 50.f);
     cancelBtn->setCallback([this]()
                            { requestStackPop(); });
 
@@ -103,6 +109,7 @@ void RecurringAddState::save()
 
     if (mAmountBox->getText().empty() ||
         mWalletBox->getText().empty() ||
+        mTypeBox->getText().empty() ||
         mDescBox->getText().empty() ||
         mDayBox->getText().empty() ||
         mStartBox->getText().empty())
@@ -127,9 +134,54 @@ void RecurringAddState::save()
         return;
     }
 
+    if (std::stof(mAmountBox->getText()) <= 0.f)
+    {
+        WarningState::setMessage("Amount must be positive!");
+        requestStackPush(States::ID::Warning);
+        return;
+    }
+
+    if (mIndex == 0)
+    {
+        std::cout << "Income Recurring Transaction Added" << std::endl;
+        std::string incomeId = mTypeBox->getText();
+        if (!incomeTypeManager.isTypeIdExist(incomeId))
+        {
+            WarningState::setMessage("Income Type ID does not exist!");
+            requestStackPush(States::ID::Warning);
+            return;
+        }
+    }
+    else if (mIndex == 1)
+    {
+        std::cout << "Expense Recurring Transaction Added" << std::endl;
+        std::string expenseId = mTypeBox->getText();
+        if (!expenseTypeManager.isTypeIdExist(expenseId))
+        {
+            WarningState::setMessage("Expense Type ID does not exist!");
+            requestStackPush(States::ID::Warning);
+            return;
+        }
+    }
+    else
+    {
+        WarningState::setMessage("Invalid Transaction Type!");
+        requestStackPush(States::ID::Warning);
+        return;
+    }
+
+    std::string walletId = mWalletBox->getText();
+    if (!walletTypeManager.isTypeIdExist(walletId))
+    {
+        WarningState::setMessage("Wallet Type ID does not exist!");
+        requestStackPush(States::ID::Warning);
+        return;
+    }
+
     RecurringTransaction t;
     t.amount = std::stof(mAmountBox->getText());
     t.walletId = mWalletBox->getText();
+
     t.description = mDescBox->getText();
     t.day = std::stoi(mDayBox->getText());
     t.startDate = mStartBox->getText();

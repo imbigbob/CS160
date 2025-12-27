@@ -10,6 +10,8 @@
 #include "../GUI/Label/Label.hpp"
 #include "../GUI/InputBox/InputBox.hpp"
 #include "../../core/RecurringManager/RecurringManager.hpp"
+#include "../../core/TypeManager/TypeManager.hpp"
+
 #include "../State.hpp"
 class RecurringEditState : public State
 {
@@ -32,7 +34,9 @@ private:
 private:
     static int sIndex;
     static DynamicArray<RecurringTransaction> *sData;
-
+    TypeManager incomeTypeManager{"IncomeTypes"};
+    TypeManager expenseTypeManager{"ExpenseTypes"};
+    TypeManager walletTypeManager{"WalletTypes"};
     GUI::Container mGUIContainer;
 
     int mIndex;
@@ -40,6 +44,7 @@ private:
 
     std::shared_ptr<GUI::InputBox> mAmountBox;
     std::shared_ptr<GUI::InputBox> mWalletBox;
+    std::shared_ptr<GUI::InputBox> mTypeBox;
     std::shared_ptr<GUI::InputBox> mDescBox;
     std::shared_ptr<GUI::InputBox> mDayBox;
     std::shared_ptr<GUI::InputBox> mStartBox;

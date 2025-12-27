@@ -5,7 +5,7 @@
 #include "../RecurringEditState/RecurringEditState.hpp"
 #include "../RecurringAddState/RecurringAddState.hpp"
 // Layout Constants
-const float TABLE_X = 200.f;
+const float TABLE_X = 100.f;
 const float TABLE_Y = 150.f; // Header Y position
 const float HEADER_HEIGHT = 40.f;
 const float ROW_HEIGHT = 60.f;
@@ -64,15 +64,7 @@ RecurringState::RecurringState(StateStack &stack, Context context)
 
     // --- TABLE HEADER SETUP ---
     // Column Widths: [0]=No., [1]=Name, [2]=ID (Optional)
-    float colWidth[] = {
-        80.f,
-        150.f,
-        120.f,
-        220.f,
-        80.f,
-        160.f,
-        160.f,
-        160.f}; // Added 3rd col width logic
+    float colWidth[] = {80.f, 150.f, 100.f, 120.f, 220.f, 80.f, 160.f, 160.f, 160.f};
 
     float tableWidth = 0.f;
     for (float w : colWidth)
@@ -83,7 +75,7 @@ RecurringState::RecurringState(StateStack &stack, Context context)
     mTableHeader.setFillColor(sf::Color(230, 230, 230));
 
     std::vector<std::string> headers = {
-        "No.", "Amount", "Wallet ID", "Description",
+        "No.", "Amount", "Wallet ID", "Type ID", "Description",
         "Day", "Start Date", "End Date", "Actions"};
 
     float currentX = TABLE_X;
@@ -122,10 +114,10 @@ RecurringState::RecurringState(StateStack &stack, Context context)
 
 void RecurringState::handleAdd()
 {
-    RecurringAddState::setPayload(
-        (currentMode == Mode::Income)
-            ? &recurringManager.getIncomes()
-            : &recurringManager.getExpenses());
+    RecurringAddState::setPayload(static_cast<int>(currentMode),
+                                  (currentMode == Mode::Income)
+                                      ? &recurringManager.getIncomes()
+                                      : &recurringManager.getExpenses());
     requestStackPush(States::ID::RecurringAdd);
     if (currentMode == Mode::Income)
         recurringManager.updateIncomeDB();
@@ -154,7 +146,7 @@ void RecurringState::reloadTable()
     auto &types = *dataList;
 
     float tableX = TABLE_X;
-    float colWidth[] = {80.f, 150.f, 120.f, 220.f, 80.f, 160.f, 160.f, 160.f}; // Added 3rd col width logic
+    float colWidth[] = {80.f, 150.f, 100.f, 120.f, 220.f, 80.f, 160.f, 160.f, 160.f}; // Added 3rd col width logic
     float currentY = TABLE_Y + HEADER_HEIGHT;
 
     sf::Font &font = getContext().fontHolder->get(Fonts::ID::Dosis);
@@ -168,7 +160,7 @@ void RecurringState::reloadTable()
     {
         // 1. Background Row (Same as your code)
         sf::RectangleShape rowRect;
-        rowRect.setSize(sf::Vector2f(colWidth[0] + colWidth[1] + colWidth[2] + colWidth[3] + colWidth[4] + colWidth[5] + colWidth[6] + colWidth[7], ROW_HEIGHT));
+        rowRect.setSize(sf::Vector2f(colWidth[0] + colWidth[1] + colWidth[2] + colWidth[3] + colWidth[4] + colWidth[5] + colWidth[6] + colWidth[7] + colWidth[8], ROW_HEIGHT));
         rowRect.setPosition(tableX, currentY);
         rowRect.setFillColor((i % 2 == 0) ? sf::Color(250, 250, 250) : sf::Color(240, 240, 240));
         mRowRects.push_back(rowRect);
@@ -177,13 +169,14 @@ void RecurringState::reloadTable()
         std::string orderStr = std::to_string(i + 1);
         std::string amountStr = std::to_string(types[i].amount);
         std::string walletIdStr = types[i].walletId;
+        std::string typeIdStr = types[i].categoryId;
         std::string descriptionStr = types[i].description;
         std::string day = std::to_string(types[i].day);
         std::string startDateStr = types[i].startDate;
         std::string endDateStr = types[i].endDate;
 
         std::vector<std::string>
-            rowData = {orderStr, amountStr, walletIdStr, descriptionStr, day, startDateStr, endDateStr};
+            rowData = {orderStr, amountStr, walletIdStr, typeIdStr, descriptionStr, day, startDateStr, endDateStr};
 
         float cx = tableX;
         for (int col = 0; col < rowData.size(); col++)

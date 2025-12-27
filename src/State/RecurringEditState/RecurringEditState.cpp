@@ -47,17 +47,20 @@ RecurringEditState::RecurringEditState(StateStack &stack, Context context)
     addField("Wallet ID:", startY + gapY);
     mWalletBox = addBox(startY + gapY);
 
-    addField("Description:", startY + gapY * 2);
-    mDescBox = addBox(startY + gapY * 2);
+    addField("Type ID:", startY + gapY * 2);
+    mTypeBox = addBox(startY + gapY * 2);
 
-    addField("Day:", startY + gapY * 3);
-    mDayBox = addBox(startY + gapY * 3);
+    addField("Description:", startY + gapY * 3);
+    mDescBox = addBox(startY + gapY * 3);
 
-    addField("Start Date:", startY + gapY * 4);
-    mStartBox = addBox(startY + gapY * 4);
+    addField("Day:", startY + gapY * 4);
+    mDayBox = addBox(startY + gapY * 4);
 
-    addField("End Date:", startY + gapY * 5);
-    mEndBox = addBox(startY + gapY * 5);
+    addField("Start Date:", startY + gapY * 5);
+    mStartBox = addBox(startY + gapY * 5);
+
+    addField("End Date:", startY + gapY * 6);
+    mEndBox = addBox(startY + gapY * 6);
 
     // Prefill
     if (mData && mIndex >= 0)
@@ -73,13 +76,13 @@ RecurringEditState::RecurringEditState(StateStack &stack, Context context)
 
     auto saveBtn = std::make_shared<GUI::Button>(
         *context.fontHolder, *context.textureHolder, "Save");
-    saveBtn->setPosition(center.x - 110.f, startY + gapY * 6 + 50.f);
+    saveBtn->setPosition(center.x - 210.f, startY + gapY * 7 + 50.f);
     saveBtn->setCallback([this]()
                          { save(); });
 
     auto cancelBtn = std::make_shared<GUI::Button>(
         *context.fontHolder, *context.textureHolder, "Cancel");
-    cancelBtn->setPosition(center.x + 110.f, startY + gapY * 6 + 50.f);
+    cancelBtn->setPosition(center.x + 210.f, startY + gapY * 7 + 50.f);
     cancelBtn->setCallback([this]()
                            { requestStackPop(); });
 
@@ -128,6 +131,7 @@ void RecurringEditState::save()
     // ---- VALIDATION ----
     if (mAmountBox->getText().empty() ||
         mWalletBox->getText().empty() ||
+        mTypeBox->getText().empty() ||
         mDescBox->getText().empty() ||
         mDayBox->getText().empty() ||
         mStartBox->getText().empty())
@@ -148,6 +152,49 @@ void RecurringEditState::save()
         !isValidDateString(mEndBox->getText()))
     {
         WarningState::setMessage("Invalid End Date (YYYY-MM-DD)");
+        requestStackPush(States::ID::Warning);
+        return;
+    }
+    if (std::stof(mAmountBox->getText()) <= 0.f)
+    {
+        WarningState::setMessage("Amount must be positive!");
+        requestStackPush(States::ID::Warning);
+        return;
+    }
+
+    if (mIndex == 0)
+    {
+        std::cout << "Income Recurring Transaction Added" << std::endl;
+        std::string incomeId = mTypeBox->getText();
+        if (!incomeTypeManager.isTypeIdExist(incomeId))
+        {
+            WarningState::setMessage("Income Type ID does not exist!");
+            requestStackPush(States::ID::Warning);
+            return;
+        }
+    }
+    else if (mIndex == 1)
+    {
+        std::cout << "Expense Recurring Transaction Added" << std::endl;
+        std::string expenseId = mTypeBox->getText();
+        if (!expenseTypeManager.isTypeIdExist(expenseId))
+        {
+            WarningState::setMessage("Expense Type ID does not exist!");
+            requestStackPush(States::ID::Warning);
+            return;
+        }
+    }
+    else
+    {
+        WarningState::setMessage("Invalid Transaction Type!");
+        requestStackPush(States::ID::Warning);
+        return;
+    }
+
+    std::string walletId = mWalletBox->getText();
+    if (!walletTypeManager.isTypeIdExist(walletId))
+    {
+        WarningState::setMessage("Wallet Type ID does not exist!");
         requestStackPush(States::ID::Warning);
         return;
     }

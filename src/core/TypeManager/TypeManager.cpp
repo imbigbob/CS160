@@ -85,3 +85,27 @@ void TypeManager::setNameByIndex(int index, const std::string newName)
     types[index].setName(newName);
     updateDb();
 }
+
+bool TypeManager::isTypeNameExist(const std::string &name) const
+{
+    for (size_t i = 0; i < types.getSize(); ++i)
+    {
+        if (types[i].getName() == name)
+        {
+            return true;
+        }
+    }
+    return false;
+}
+
+bool TypeManager::isTypeIdExist(const std::string &id) const
+{
+    for (size_t i = 0; i < types.getSize(); ++i)
+    {
+        if (types[i].getId() == id)
+        {
+            return true;
+        }
+    }
+    return false;
+}

@@ -17,6 +17,8 @@ public:
     void removeTypeByIndex(int index);
     void updateDb();
     void setNameByIndex(int index, const std::string newName);
+    bool isTypeNameExist(const std::string &name) const;
+    bool isTypeIdExist(const std::string &id) const;
 };
 
 #endif // TYPEMANAGER_HPP

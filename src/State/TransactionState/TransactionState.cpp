@@ -7,40 +7,39 @@
 
 // Define constants for easier adjustments
 const float TABLE_X = 150.f;
-const float TABLE_Y = 150.f;  // Header Y position
+const float TABLE_Y = 150.f; // Header Y position
 const float HEADER_HEIGHT = 40.f;
 const float ROW_HEIGHT = 40.f;
 
-TransactionState::TransactionState(StateStack& stack, Context context)
-    : State(stack, context), mScrollY(0.f), mTotalContentHeight(0.f) {
+TransactionState::TransactionState(StateStack &stack, Context context)
+    : State(stack, context), mScrollY(0.f), mTotalContentHeight(0.f)
+{
     sf::Vector2f windowSize(context.window->getSize());
-    sf::Texture& backgroundTexture =
-        context.textureHolder->get(Textures::ID::MenuBackground);
+    sf::Texture &backgroundTexture =
+        context.textureHolder->get(Textures::ID::ManagementBackground);
 
     mBackgroundSprite.setTexture(backgroundTexture);
     mBackgroundSprite.setScale(
         windowSize.x / backgroundTexture.getSize().x,
-        windowSize.y / backgroundTexture.getSize().y
-    );
+        windowSize.y / backgroundTexture.getSize().y);
 
     // --- BUTTONS SETUP (Same as your code) ---
     auto backButton = std::make_shared<GUI::Button>(
-        *context.fontHolder, *context.textureHolder, "Back"
-    );
+        *context.fontHolder, *context.textureHolder, "Back");
     backButton->setPosition(250.f, 50.f);
-    backButton->setCallback([this]() { requestStackPop(); });
+    backButton->setCallback([this]()
+                            { requestStackPop(); });
 
     auto addButton = std::make_shared<GUI::Button>(
-        *context.fontHolder, *context.textureHolder, "Add"
-    );
-    addButton->setPosition(400.f, 50.f);
+        *context.fontHolder, *context.textureHolder, "Add");
+    addButton->setPosition(500.f, 50.f);
     addButton->setCallback([this]() { /* TODO: Add transaction */ });
 
     auto toggleButton = std::make_shared<GUI::Button>(
-        *context.fontHolder, *context.textureHolder, "Show Expense"
-    );
-    toggleButton->setPosition(550.f, 50.f);
-    toggleButton->setCallback([this, toggleButton]() {
+        *context.fontHolder, *context.textureHolder, "Show Expense");
+    toggleButton->setPosition(750.f, 50.f);
+    toggleButton->setCallback([this, toggleButton]()
+                              {
         if (mMode == Mode::Income) {
             mMode = Mode::Expense;
             toggleButton->setText("Show Income");
@@ -48,8 +47,7 @@ TransactionState::TransactionState(StateStack& stack, Context context)
             mMode = Mode::Income;
             toggleButton->setText("Show Expense");
         }
-        reloadTable();
-    });
+        reloadTable(); });
 
     mGUIContainer.addComponent(backButton);
     mGUIContainer.addComponent(addButton);
@@ -60,19 +58,17 @@ TransactionState::TransactionState(StateStack& stack, Context context)
 
     mTableHeader.setSize(
         sf::Vector2f(
-            colWidth[0] + colWidth[1] + colWidth[2] + colWidth[3], HEADER_HEIGHT
-        )
-    );
+            colWidth[0] + colWidth[1] + colWidth[2] + colWidth[3], HEADER_HEIGHT));
     mTableHeader.setPosition(TABLE_X, TABLE_Y);
     mTableHeader.setFillColor(sf::Color(230, 230, 230));
 
-    sf::Font& font = context.fontHolder->get(Fonts::ID::Dosis);
+    sf::Font &font = context.fontHolder->get(Fonts::ID::Dosis);
     std::vector<std::string> headers = {
-        "Date", "Source", "Amount", "Description"
-    };
+        "Date", "Source", "Amount", "Description"};
     float currentX = TABLE_X;
 
-    for (int i = 0; i < headers.size(); i++) {
+    for (int i = 0; i < headers.size(); i++)
+    {
         sf::Text text;
         text.setFont(font);
         text.setString(headers[i]);
@@ -91,14 +87,12 @@ TransactionState::TransactionState(StateStack& stack, Context context)
     // Width: Full window width (or table width)
     // Height: From bottom of header to bottom of window
     mTableBounds = sf::FloatRect(
-        0.f, listTopY, windowSize.x, windowSize.y - listTopY - 50.f
-    );
+        0.f, listTopY, windowSize.x, windowSize.y - listTopY - 50.f);
 
     // Initialize the View to look at this area
     mTableView.setSize(mTableBounds.width, mTableBounds.height);
     mTableView.setCenter(
-        mTableBounds.width / 2.f, listTopY + mTableBounds.height / 2.f
-    );
+        mTableBounds.width / 2.f, listTopY + mTableBounds.height / 2.f);
 
     // Set Viewport: This maps the view to the specific part of the window
     // Normalized coordinates (0.0 to 1.0)
@@ -110,7 +104,8 @@ TransactionState::TransactionState(StateStack& stack, Context context)
     reloadTable();
 }
 
-void TransactionState::reloadTable() {
+void TransactionState::reloadTable()
+{
     mRowRects.clear();
     mRowTexts.clear();
 
@@ -126,25 +121,29 @@ void TransactionState::reloadTable() {
     float startY = TABLE_Y + HEADER_HEIGHT;
     float currentY = startY;
 
-    sf::Font& font = getContext().fontHolder->get(Fonts::ID::Dosis);
+    sf::Font &font = getContext().fontHolder->get(Fonts::ID::Dosis);
 
     // --- SELECT DATA ---
     // Note: Assuming DynamicArray has standard iterator or access
     int count = (mMode == Mode::Income) ? mIncomeManager.getAll().getSize()
                                         : mExpenseManager.getAll().getSize();
 
-    for (int i = 0; i < count; i++) {
+    for (int i = 0; i < count; i++)
+    {
         // Retrieve data based on mode
         std::string date, name, amountStr, desc;
 
-        if (mMode == Mode::Income) {
-            const auto& r = mIncomeManager.getAll()[i];
+        if (mMode == Mode::Income)
+        {
+            const auto &r = mIncomeManager.getAll()[i];
             date = r.getDate();
             name = r.getName();
             amountStr = std::to_string(r.getAmount());
             desc = r.getDescription();
-        } else {
-            const auto& r = mExpenseManager.getAll()[i];
+        }
+        else
+        {
+            const auto &r = mExpenseManager.getAll()[i];
             date = r.getDate();
             name = r.getName();
             amountStr = std::to_string(r.getAmount());
@@ -156,9 +155,7 @@ void TransactionState::reloadTable() {
         rowRect.setSize(
             sf::Vector2f(
                 colWidth[0] + colWidth[1] + colWidth[2] + colWidth[3],
-                ROW_HEIGHT
-            )
-        );
+                ROW_HEIGHT));
         rowRect.setPosition(tableX, currentY);
         rowRect.setFillColor(sf::Color(245, 245, 245));
         mRowRects.push_back(rowRect);
@@ -166,7 +163,8 @@ void TransactionState::reloadTable() {
         // Row Text
         std::vector<std::string> items = {date, name, amountStr, desc};
         float cx = tableX;
-        for (int col = 0; col < items.size(); col++) {
+        for (int col = 0; col < items.size(); col++)
+        {
             sf::Text t;
             t.setFont(font);
             t.setString(items[col]);
@@ -183,12 +181,15 @@ void TransactionState::reloadTable() {
     mTotalContentHeight = count * ROW_HEIGHT;
 }
 
-bool TransactionState::handleEvent(const sf::Event& event) {
+bool TransactionState::handleEvent(const sf::Event &event)
+{
     mGUIContainer.handleEvent(event, *getContext().window);
 
     // Handle Scrolling
-    if (event.type == sf::Event::MouseWheelScrolled) {
-        if (event.mouseWheelScroll.wheel == sf::Mouse::VerticalWheel) {
+    if (event.type == sf::Event::MouseWheelScrolled)
+    {
+        if (event.mouseWheelScroll.wheel == sf::Mouse::VerticalWheel)
+        {
             float delta = event.mouseWheelScroll.delta;
             float scrollSpeed = 30.f;
             mScrollY -= delta * scrollSpeed;
@@ -200,18 +201,21 @@ bool TransactionState::handleEvent(const sf::Event& event) {
     return false;
 }
 
-void TransactionState::updateScrollView() {
+void TransactionState::updateScrollView()
+{
     // 1. Calculate the visible height of the table view
     float visibleHeight = mTableBounds.height;
 
     // 2. Clamp mScrollY (Don't scroll past top or bottom)
-    if (mScrollY < 0.f) mScrollY = 0.f;
+    if (mScrollY < 0.f)
+        mScrollY = 0.f;
 
     // Max scroll is total content minus visible area
     // If content is smaller than screen, max scroll is 0
     float maxScroll = std::max(0.f, mTotalContentHeight - visibleHeight);
 
-    if (mScrollY > maxScroll) mScrollY = maxScroll;
+    if (mScrollY > maxScroll)
+        mScrollY = maxScroll;
 
     // 3. Move the View
     // The view center starts at center of the rect + scroll offset
@@ -224,24 +228,28 @@ void TransactionState::updateScrollView() {
 
 bool TransactionState::update(sf::Time deltaTime) { return true; }
 
-void TransactionState::draw() {
-    sf::RenderWindow& window = *getContext().window;
+void TransactionState::draw()
+{
+    sf::RenderWindow &window = *getContext().window;
 
     // 1. Draw Background
-    window.setView(window.getDefaultView());  // Ensure we are in default view
+    window.setView(window.getDefaultView()); // Ensure we are in default view
     window.draw(mBackgroundSprite);
 
     // 2. Draw Header (Fixed position)
     window.draw(mTableHeader);
-    for (auto& t : mHeaderTexts) window.draw(t);
+    for (auto &t : mHeaderTexts)
+        window.draw(t);
 
     // 3. Draw Table Content (Scrolled View)
-    window.setView(mTableView);  // <--- SWITCH CAMERA
+    window.setView(mTableView); // <--- SWITCH CAMERA
 
-    for (auto& r : mRowRects) window.draw(r);
-    for (auto& t : mRowTexts) window.draw(t);
+    for (auto &r : mRowRects)
+        window.draw(r);
+    for (auto &t : mRowTexts)
+        window.draw(t);
 
     // 4. Draw GUI Overlay (Buttons) - Switch back to default
-    window.setView(window.getDefaultView());  // <--- RESET CAMERA
+    window.setView(window.getDefaultView()); // <--- RESET CAMERA
     window.draw(mGUIContainer);
 }
