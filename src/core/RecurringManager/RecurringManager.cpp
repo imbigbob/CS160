@@ -224,3 +224,31 @@ void RecurringManager::processRecurring()
         updateDB(expenseFilepath, expenseRules);
     return;
 }
+void RecurringManager::deleteIncomeRule(int index)
+{
+    if (index < 0 || index >= incomeRules.getSize())
+        return;
+    incomeRules.removeAt(index);
+    updateDB(incomeFilepath, incomeRules);
+}
+void RecurringManager::deleteExpenseRule(int index)
+{
+    if (index < 0 || index >= expenseRules.getSize())
+        return;
+    expenseRules.removeAt(index);
+    updateDB(expenseFilepath, expenseRules);
+}
+
+void RecurringManager::editIncomeRule()
+{
+    // Implementation depends on how you want to edit the rule
+    // This is a placeholder for the actual editing logic
+    updateDB(incomeFilepath, incomeRules);
+}
+
+void RecurringManager::editExpenseRule()
+{
+    // Implementation depends on how you want to edit the rule
+    // This is a placeholder for the actual editing logic
+    updateDB(expenseFilepath, expenseRules);
+}

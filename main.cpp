@@ -8,6 +8,8 @@
 #include "src/core/RecurringManager/RecurringManager.hpp"
 int main()
 {
+    RecurringManager recurringManager;
+    recurringManager.processRecurring();
     try
     {
         Program program;
@@ -17,8 +19,6 @@ int main()
     {
         std::cout << "EXCEPTION bug: " << e.what() << '\n';
     }
-    RecurringManager recurringManager;
-    recurringManager.processRecurring();
 
     return 0;
 }

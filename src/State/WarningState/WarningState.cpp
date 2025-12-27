@@ -43,7 +43,7 @@ void WarningState::draw()
     window.setView(window.getDefaultView());
 
     sf::RectangleShape dim(window.getView().getSize());
-    dim.setFillColor(sf::Color(0, 0, 0, 256));
+    dim.setFillColor(sf::Color(255, 255, 255, 200));
     window.draw(dim);
     window.draw(mMessageText);
     window.draw(mGUIContainer);

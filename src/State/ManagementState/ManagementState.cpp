@@ -33,7 +33,7 @@ ManagementState::ManagementState(StateStack &stack, Context context)
 
     modeSwitchButton = std::make_shared<GUI::Button>(
         *context.fontHolder, *context.textureHolder, "Income");
-    modeSwitchButton->setPosition(450.f, 50.f);
+    modeSwitchButton->setPosition(500.f, 50.f);
     modeSwitchButton->setCallback([this]()
                                   {
         // Rotate Mode
@@ -56,7 +56,7 @@ ManagementState::ManagementState(StateStack &stack, Context context)
 
     addButton = std::make_shared<GUI::Button>(
         *context.fontHolder, *context.textureHolder, "Add");
-    addButton->setPosition(700.f, 50.f);
+    addButton->setPosition(750.f, 50.f);
 
     addButton->setCallback([this]()
                            { handleAdd(); });

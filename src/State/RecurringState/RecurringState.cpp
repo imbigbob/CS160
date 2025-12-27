@@ -34,7 +34,7 @@ RecurringState::RecurringState(StateStack &stack, Context context)
 
     modeSwitchButton = std::make_shared<GUI::Button>(
         *context.fontHolder, *context.textureHolder, "Income");
-    modeSwitchButton->setPosition(450.f, 50.f);
+    modeSwitchButton->setPosition(500.f, 50.f);
     modeSwitchButton->setCallback([this]()
                                   {
         // Rotate Mode
@@ -53,7 +53,7 @@ RecurringState::RecurringState(StateStack &stack, Context context)
 
     addButton = std::make_shared<GUI::Button>(
         *context.fontHolder, *context.textureHolder, "Add");
-    addButton->setPosition(700.f, 50.f);
+    addButton->setPosition(750.f, 50.f);
 
     addButton->setCallback([this]()
                            { handleAdd(); });
@@ -122,8 +122,15 @@ RecurringState::RecurringState(StateStack &stack, Context context)
 
 void RecurringState::handleAdd()
 {
-    // ManagementAddState::setPayload(static_cast<int>(currentMode), recurringManager);
-    // requestStackPush(States::ID::ManagementAdd);
+    RecurringAddState::setPayload(
+        (currentMode == Mode::Income)
+            ? &recurringManager.getIncomes()
+            : &recurringManager.getExpenses());
+    requestStackPush(States::ID::RecurringAdd);
+    if (currentMode == Mode::Income)
+        recurringManager.updateIncomeDB();
+    else if (currentMode == Mode::Expense)
+        recurringManager.updateExpenseDB();
 }
 void RecurringState::reloadTable()
 {
@@ -318,6 +325,10 @@ void RecurringState::handleEdit(int index)
 {
     RecurringEditState::setPayload(index, (currentMode == Mode::Income) ? &recurringManager.getIncomes() : &recurringManager.getExpenses());
     requestStackPush(States::ID::RecurringEdit);
+    if (currentMode == Mode::Income)
+        recurringManager.updateIncomeDB();
+    else if (currentMode == Mode::Expense)
+        recurringManager.updateExpenseDB();
 }
 
 void RecurringState::handleDelete(int index)
@@ -329,6 +340,11 @@ void RecurringState::handleDelete(int index)
         dataList = &recurringManager.getExpenses();
 
     dataList->removeAt(index);
+
+    if (currentMode == Mode::Income)
+        recurringManager.updateIncomeDB();
+    else if (currentMode == Mode::Expense)
+        recurringManager.updateExpenseDB();
 
     reloadTable();
 }

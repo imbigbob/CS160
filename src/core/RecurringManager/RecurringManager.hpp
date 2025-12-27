@@ -42,10 +42,17 @@ private:
 
 public:
     RecurringManager();
+    ~RecurringManager() {};
     void addRule(const RecurringTransaction &rule);
     void processRecurring();
     DynamicArray<RecurringTransaction> &getIncomes() { return incomeRules; };
+    void deleteIncomeRule(int index);
+    void deleteExpenseRule(int index);
+    void editIncomeRule();
+    void editExpenseRule();
     DynamicArray<RecurringTransaction> &getExpenses() { return expenseRules; };
+    void updateIncomeDB() { updateDB(incomeFilepath, incomeRules); };
+    void updateExpenseDB() { updateDB(expenseFilepath, expenseRules); };
 };
 
 #endif

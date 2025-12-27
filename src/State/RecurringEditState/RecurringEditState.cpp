@@ -23,7 +23,7 @@ RecurringEditState::RecurringEditState(StateStack &stack, Context context)
 
     const float startY = center.y - 180.f;
     const float gapY = 45.f;
-    const float startX = center.x - 200.f;
+    const float startX = center.x - 300.f;
 
     auto addField = [&](const std::string &label, float y)
     {
@@ -73,13 +73,13 @@ RecurringEditState::RecurringEditState(StateStack &stack, Context context)
 
     auto saveBtn = std::make_shared<GUI::Button>(
         *context.fontHolder, *context.textureHolder, "Save");
-    saveBtn->setPosition(center.x - 100.f, startY + gapY * 6 + 20.f);
+    saveBtn->setPosition(center.x - 110.f, startY + gapY * 6 + 50.f);
     saveBtn->setCallback([this]()
                          { save(); });
 
     auto cancelBtn = std::make_shared<GUI::Button>(
         *context.fontHolder, *context.textureHolder, "Cancel");
-    cancelBtn->setPosition(center.x + 100.f, startY + gapY * 6 + 20.f);
+    cancelBtn->setPosition(center.x + 110.f, startY + gapY * 6 + 50.f);
     cancelBtn->setCallback([this]()
                            { requestStackPop(); });
 
