@@ -1,35 +1,35 @@
 [
     {
-        "amount": 15000000,
-        "categoryId": "salary",
-        "type": "Salary",
-        "walletId": "wallet_main",
-        "description": "Monthly salary",
+        "amount": 150.0,
+        "categoryId": "1",
         "day": 5,
-        "startDate": "2024-01-01",
+        "description": "Monthly salary",
         "endDate": "",
-        "lastAppliedYM": ""
+        "lastAppliedYM": "2025-12",
+        "startDate": "2024-01-01",
+        "type": "Salary",
+        "walletId": "1"
     },
     {
-        "amount": 2000000,
-        "categoryId": "freelance",
-        "type": "Freelance",
-        "walletId": "wallet_main",
-        "description": "Freelance project",
+        "amount": 200.0,
+        "categoryId": "2",
         "day": 15,
-        "startDate": "2024-06-01",
+        "description": "Freelance project",
         "endDate": "2025-12-31",
-        "lastAppliedYM": "2025-01"
+        "lastAppliedYM": "2025-12",
+        "startDate": "2024-06-01",
+        "type": "Freelance",
+        "walletId": "2"
     },
     {
-        "amount": 500000,
-        "categoryId": "interest",
-        "type": "Interest",
-        "walletId": "wallet_saving",
-        "description": "Bank interest",
+        "amount": 50.0,
+        "categoryId": "3",
         "day": 28,
-        "startDate": "2024-01-01",
+        "description": "Bank interest",
         "endDate": "",
-        "lastAppliedYM": ""
+        "lastAppliedYM": "",
+        "startDate": "2024-01-01",
+        "type": "Interest",
+        "walletId": "1"
     }
 ]

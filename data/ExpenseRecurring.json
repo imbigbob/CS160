@@ -1,9 +1,9 @@
 [
     {
-        "amount": 30000,
-        "categoryId": "rent",
+        "amount": 3000,
+        "categoryId": "1",
         "type": "Rent",
-        "walletId": "wallet_main",
+        "walletId": "1",
         "description": "House rent",
         "day": 1,
         "startDate": "2024-01-01",
@@ -11,10 +11,10 @@
         "lastAppliedYM": ""
     },
     {
-        "amount": 5000,
-        "categoryId": "internet",
-        "type": "Internet",
-        "walletId": "wallet_main",
+        "amount": 50,
+        "categoryId": "2",
+        "type": "Utilities",
+        "walletId": "2",
         "description": "Internet bill",
         "day": 10,
         "startDate": "2026-01-01",
@@ -22,11 +22,11 @@
         "lastAppliedYM": ""
     },
     {
-        "amount": 1200000,
-        "categoryId": "gym",
-        "type": "Gym",
-        "walletId": "wallet_health",
-        "description": "Gym membership",
+        "amount": 120,
+        "categoryId": "3",
+        "type": "hang out",
+        "walletId": "1",
+        "description": "Hang out with friends",
         "day": 20,
         "startDate": "2024-01-01",
         "endDate": "2024-12-31",

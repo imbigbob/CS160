@@ -1,10 +1,17 @@
 [
   {
     "id": "1",
-    "name": "Credit Card"
+    "name": "Credit Card",
+    "balance": 1000.0
   },
   {
     "id": "2",
-    "name": "Personal Loan"
+    "name": "Personal Loan",
+    "balance": 0.0
+  },
+  {
+    "id": "3",
+    "name": "Savings Account",
+    "balance": 5000.0
   }
 ]

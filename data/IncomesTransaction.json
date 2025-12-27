@@ -16,5 +16,23 @@
     "type": "Freelance",
     "walletId": "W1",
     "walletName": ""
+  },
+  {
+    "amount": 150.0,
+    "date": "2025-12-27",
+    "description": "Monthly salary [Auto Rec]",
+    "id": "1766834175",
+    "type": "Salary",
+    "walletId": "1",
+    "walletName": ""
+  },
+  {
+    "amount": 200.0,
+    "date": "2025-12-27",
+    "description": "Freelance project [Auto Rec]",
+    "id": "1766834175",
+    "type": "Freelance",
+    "walletId": "2",
+    "walletName": ""
   }
 ]

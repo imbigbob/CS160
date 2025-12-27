@@ -7,11 +7,9 @@
 #include "core/DynamicArray/DynamicArray.hpp"
 #include "core/IncomeManager/IncomeManager.hpp"
 #include "core/ExpenseManager/ExpenseManager.hpp"
-
+#include "core/WalletManager/WalletManager.hpp"
 struct RecurringTransaction
 {
-    // Transaction baseTransaction();
-
     // Similar to Income and Expense
     int typeTransaction; // 1 is Income and 2 is Expense
     double amount;
@@ -36,28 +34,21 @@ private:
 
     std::string incomeFilepath;
     std::string expenseFilepath;
+    WalletManager walletManager;
 
-    //    private:
+private:
     void updateDB(const std::string &filepath, DynamicArray<RecurringTransaction> &list);
     void loadFromDB(const std::string &filepath, DynamicArray<RecurringTransaction> &list, int type);
 
     std::string getCurrentYM();
-    //     bool checkTransactionExists(
-    //         const RecurringTransaction& rt, const TransactionManager& tm
-    //     );
+    bool checkConditionExpense(RecurringTransaction &rule);
 
 public:
     RecurringManager();
     void addRule(const RecurringTransaction &rule);
     void processRecurring();
-    // void applyForCurrentMonth(TransactionManager& tm);
-    // void updateRecurringTransactions(TransactionManager& tm);
     DynamicArray<RecurringTransaction> &getIncomes();
     DynamicArray<RecurringTransaction> &getExpenses();
-    // DynamicArray<RecurringTransaction>& getAll();
 };
-
-// std::string getCurrentDate();
-// int getCurrentDay();
 
 #endif
