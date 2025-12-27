@@ -4,7 +4,7 @@
     "date": "2024-06-01",
     "description": "Monthly salary",
     "id": "1",
-    "sourceName": "Salary",
+    "type": "Salary",
     "walletId": "W1",
     "walletName": ""
   },
@@ -13,7 +13,7 @@
     "date": "2024-06-15",
     "description": "Freelance project payment",
     "id": "2",
-    "sourceName": "Freelance",
+    "type": "Freelance",
     "walletId": "W1",
     "walletName": ""
   }

@@ -28,8 +28,8 @@ IncomeManager::IncomeManager()
             income.setDate(obj["date"].get<std::string>());
         if (obj.contains("id"))
             income.setId(obj["id"].get<std::string>());
-        if (obj.contains("sourceName"))
-            income.setName(obj["sourceName"].get<std::string>());
+        if (obj.contains("type"))
+            income.setName(obj["type"].get<std::string>());
         if (obj.contains("amount"))
             income.setAmount(obj["amount"].get<double>());
         if (obj.contains("walletId"))
@@ -87,7 +87,7 @@ void IncomeManager::updateDB()
         Json obj;
         obj["date"] = income.getDate();
         obj["id"] = income.getId();
-        obj["sourceName"] = income.getName();
+        obj["type"] = income.getName();
         obj["amount"] = income.getAmount();
         obj["walletId"] = income.getWalletId();
         obj["walletName"] = ""; // placeholder
@@ -158,7 +158,7 @@ double IncomeManager::anualIncomeOverview(DynamicArray<int> year)
     return totalIncome;
 }
 
-double IncomeManager::incomeBreakdownBySource(DynamicArray<int> year, const std::string &sourceName)
+double IncomeManager::incomeBreakdownBySource(DynamicArray<int> year, const std::string &type)
 {
     double totalIncome = 0.0;
 
@@ -172,12 +172,12 @@ double IncomeManager::incomeBreakdownBySource(DynamicArray<int> year, const std:
         for (int j = 0; j < list.getSize(); ++j)
         {
             std::string incomeDate = list[j].getDate(); // Returns "YYYY-MM-DD"
-            std::string incomeSourceName = list[j].getName();
+            std::string incometype = list[j].getName();
 
             // 3. Check if the date has enough characters and matches the year
             // substr(0, 4) extracts the first 4 chars (The Year)
             if (incomeDate.length() >= 4 && incomeDate.substr(0, 4) == targetYearStr &&
-                incomeSourceName == sourceName)
+                incometype == type)
             {
                 totalIncome += list[j].getAmount();
             }

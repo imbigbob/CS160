@@ -1,0 +1,35 @@
+[
+    {
+        "amount": 30000,
+        "categoryId": "rent",
+        "type": "Rent",
+        "walletId": "wallet_main",
+        "description": "House rent",
+        "day": 1,
+        "startDate": "2024-01-01",
+        "endDate": "",
+        "lastAppliedYM": ""
+    },
+    {
+        "amount": 5000,
+        "categoryId": "internet",
+        "type": "Internet",
+        "walletId": "wallet_main",
+        "description": "Internet bill",
+        "day": 10,
+        "startDate": "2026-01-01",
+        "endDate": "",
+        "lastAppliedYM": ""
+    },
+    {
+        "amount": 1200000,
+        "categoryId": "gym",
+        "type": "Gym",
+        "walletId": "wallet_health",
+        "description": "Gym membership",
+        "day": 20,
+        "startDate": "2024-01-01",
+        "endDate": "2024-12-31",
+        "lastAppliedYM": ""
+    }
+]

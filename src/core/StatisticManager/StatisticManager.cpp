@@ -49,13 +49,13 @@ double StatisticManager::annualExpenseOverview(DynamicArray<int> year)
 }
 
 double StatisticManager::annualIncomeBreakdownBySource(
-    DynamicArray<int> year, const std::string &sourceName)
+    DynamicArray<int> year, const std::string &type)
 {
-    return incomeManager.incomeBreakdownBySource(year, sourceName);
+    return incomeManager.incomeBreakdownBySource(year, type);
 }
 
 double StatisticManager::annualExpenseBreakdownByCategory(
-    DynamicArray<int> year, const std::string &categoryName)
+    DynamicArray<int> year, const std::string &type)
 {
-    return expenseManager.expenseBreakdownByCategory(year, categoryName);
+    return expenseManager.expenseBreakdownByCategory(year, type);
 }

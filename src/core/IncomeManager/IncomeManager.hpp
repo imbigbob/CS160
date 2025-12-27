@@ -19,6 +19,6 @@ public:
     DynamicArray<Income> &getAll();
     double getBalanceInTimeRange(std::string start, std::string end);
     double anualIncomeOverview(DynamicArray<int> year);
-    double incomeBreakdownBySource(DynamicArray<int> year, const std::string &sourceName);
+    double incomeBreakdownBySource(DynamicArray<int> year, const std::string &type);
 };
 #endif

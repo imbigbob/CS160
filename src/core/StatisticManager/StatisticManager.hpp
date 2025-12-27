@@ -39,8 +39,8 @@ public:
     double annualIncomeOverview(DynamicArray<int> year);
     double annualExpenseOverview(DynamicArray<int> year);
     double annualIncomeBreakdownBySource(
-        DynamicArray<int> year, const std::string &sourceName);
+        DynamicArray<int> year, const std::string &type);
     double annualExpenseBreakdownByCategory(
-        DynamicArray<int> year, const std::string &categoryName);
+        DynamicArray<int> year, const std::string &type);
 };
 #endif

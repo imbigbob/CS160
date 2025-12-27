@@ -17,7 +17,7 @@ public:
     void updateDB();
     double getBalanceInTimeRange(std::string start, std::string end);
     double anualExpenseOverview(DynamicArray<int> year);
-    double expenseBreakdownByCategory(DynamicArray<int> year, const std::string &categoryName);
+    double expenseBreakdownByCategory(DynamicArray<int> year, const std::string &type);
 };
 
 #endif

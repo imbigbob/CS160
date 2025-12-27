@@ -37,8 +37,8 @@ ExpenseManager::ExpenseManager()
             expense.setDate(obj["date"].get<std::string>());
         if (obj.contains("id"))
             expense.setId(obj["id"].get<std::string>());
-        if (obj.contains("categoryName"))
-            expense.setName(obj["categoryName"].get<std::string>());
+        if (obj.contains("type"))
+            expense.setName(obj["type"].get<std::string>());
         if (obj.contains("amount"))
             expense.setAmount(obj["amount"].get<double>());
 
@@ -83,7 +83,7 @@ void ExpenseManager::updateDB()
         json obj;
         obj["date"] = expense.getDate();
         obj["id"] = expense.getId();
-        obj["categoryName"] = expense.getName();
+        obj["type"] = expense.getName();
         obj["amount"] = expense.getAmount();
 
         obj["walletId"] = expense.getWalletId();
@@ -98,6 +98,7 @@ void ExpenseManager::updateDB()
     {
         throw std::runtime_error("Error opening data/ExpensesTransaction.json for writing");
     }
+    file << root.dump(2);
 }
 
 double ExpenseManager::getBalanceInTimeRange(std::string start, std::string end)
@@ -152,7 +153,7 @@ double ExpenseManager::anualExpenseOverview(DynamicArray<int> year)
     return totalExpense;
 }
 
-double ExpenseManager::expenseBreakdownByCategory(DynamicArray<int> year, const std::string &categoryName)
+double ExpenseManager::expenseBreakdownByCategory(DynamicArray<int> year, const std::string &type)
 {
     double totalExpense = 0.0;
 
@@ -170,7 +171,7 @@ double ExpenseManager::expenseBreakdownByCategory(DynamicArray<int> year, const 
             // 3. Check if the date has enough characters and matches the year
             // substr(0, 4) extracts the first 4 chars (The Year)
             if (expenseDate.length() >= 4 && expenseDate.substr(0, 4) == targetYearStr &&
-                list[j].getName() == categoryName)
+                list[j].getName() == type)
             {
                 totalExpense += list[j].getAmount();
             }
