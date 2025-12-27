@@ -88,5 +88,14 @@
     "type": "Groceries",
     "walletId": "W1",
     "walletName": ""
+  },
+  {
+    "amount": 3000.0,
+    "date": "2025-12-27",
+    "description": "House rent [Auto Rec]",
+    "id": "1766840569",
+    "type": "Rent",
+    "walletId": "1",
+    "walletName": ""
   }
 ]

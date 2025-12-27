@@ -3,7 +3,6 @@
 #include "core/DynamicArray/DynamicArray.hpp"
 #include "model/Expense/Expense.hpp"
 #include "model/Income/Income.hpp"
-#include "model/Wallet/Wallet.hpp"
 class TransactionManager
 {
 private:

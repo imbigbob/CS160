@@ -208,9 +208,7 @@ void RecurringManager::processRecurring()
             continue;
         if (!rule.endDate.empty() && todayDate > rule.endDate)
             continue;
-        if (!checkConditionExpense(rule))
-            std::cout << ">> [Auto Expense] Skipped (Insufficient funds): " << rule.description << "\n";
-        continue;
+
         // Expense profile
         Expense exp(rule.type, rule.amount,
                     rule.walletId, "", rule.description + " [Auto Rec]");
@@ -225,15 +223,4 @@ void RecurringManager::processRecurring()
     if (expenseProcessed)
         updateDB(expenseFilepath, expenseRules);
     return;
-}
-
-bool RecurringManager::checkConditionExpense(RecurringTransaction &rule)
-{
-    double balance = walletManager.getWalletByIndex(rule.walletId)->getBalance();
-    if (rule.amount < balance)
-    {
-        walletManager.getWalletByIndex(rule.walletId)->adjustBalance(-rule.amount);
-        return true;
-    }
-    return false;
 }
