@@ -10,7 +10,6 @@
 #include "../core/ExpenseManager/ExpenseManager.hpp"
 
 // --- NEW Managers ---
-// Ensure these paths match your actual directory structure
 #include "../core/IncomeManagement/IncomeManagement.hpp"
 #include "../core/ExpenseManagement/ExpenseManagement.hpp"
 #include "../core/WalletManager/WalletManager.hpp"
@@ -37,18 +36,20 @@ private:
     TextureHolder mTextureHolder;
     FontHolder mFontHolder;
     
-    // We must declare managers BEFORE StateStack so they are initialized first
+    // --- Data Managers ---
+    // These must be declared BEFORE StateStack so they are initialized first
     
-    // Old
+    // Old (Used for Transactions/Recurring)
     IncomeManager mIncomeManager;
     ExpenseManager mExpenseManager;
 
-    // New
+    // New (Used for Master Management)
     IncomeManagement mIncomeManagement;
     ExpenseManagement mExpenseManagement;
     WalletManager mWalletManager;
 
-    int mActiveRecordType; // 0=Expense, 1=Income, 2=Wallet
+    // Shared Data Context
+    int mActiveRecordType; // 0=Expense, 1=Income, etc.
     int mActiveRecordId;   // ID of the item being edited
 
     StateStack mStateStack;

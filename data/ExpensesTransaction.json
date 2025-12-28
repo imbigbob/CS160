@@ -16,5 +16,32 @@
         "id": "",
         "walletId": "",
         "walletName": "Tablert"
+    },
+    {
+        "amount": 25.0,
+        "categoryName": "Cash",
+        "date": "2025-12-28",
+        "description": "CAsh (Auto-Recurring)",
+        "id": "1766918055755",
+        "walletId": "",
+        "walletName": "Cash"
+    },
+    {
+        "amount": 2.0,
+        "categoryName": "Hi",
+        "date": "2025-12-28",
+        "description": "123123123 (Auto-Recurring)",
+        "id": "1766918055949",
+        "walletId": "",
+        "walletName": "Tablert"
+    },
+    {
+        "amount": 2.0,
+        "categoryName": "A",
+        "date": "2025-12-28",
+        "description": "Manually Added (Auto-Recurring)",
+        "id": "1766920176474",
+        "walletId": "10",
+        "walletName": "Wallet"
     }
 ]

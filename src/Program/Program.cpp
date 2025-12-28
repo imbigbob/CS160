@@ -2,20 +2,23 @@
 
 #include "../Global/Global.hpp"
 
-// --- Include Existing States ---
+// --- Include General States ---
 #include "../State/MenuState/MenuState.hpp"
 #include "../State/TransactionState/TransactionState.hpp"
-#include "../State/RecurringTransactionState/RecurringTransactionState.hpp"
 #include "../State/StatisticsState/StatisticsState.hpp"
-// (Old Management State - commented out to prefer the new one)
-// #include "../State/ManagementState/ManagementState.hpp"
 
 // --- Include NEW Master Management States ---
 #include "../State/MasterManagementState/MasterManagementState.hpp"
 #include "../State/MasterManagementAddState/MasterManagementAddState.hpp"
 #include "../State/MasterManagementEditState/MasterManagementEditState.hpp"
 
-// Note: Ensure you have these folders/files created as discussed previously
+// --- Include NEW Recurring States ---
+#include "../State/RecurringState/RecurringState.hpp"
+#include "../State/RecurringAddState/RecurringAddState.hpp"
+#include "../State/RecurringEditState/RecurringEditState.hpp"
+
+// --- Include Recurring Manager Logic ---
+#include "../core/RecurringManager/RecurringManager.hpp"
 
 const sf::Time Program::TIME_PER_FRAME = sf::seconds(1.f / 60.f);
 
@@ -36,17 +39,21 @@ Program::Program()
       mActiveRecordType(0),
       mActiveRecordId(-1),
 
-      // 4. Initialize StateStack with the FULL Context
-      // Order must match State::Context constructor in State.cpp
+      // 4. Initialize StateStack with FULL Context
       mStateStack(State::Context(mWindow, mTextureHolder, mFontHolder,
-                                 mIncomeManager, mExpenseManager,          // Old
-                                 mIncomeManagement, mExpenseManagement, mWalletManager, // New
-                                 mActiveRecordType, mActiveRecordId))      // Integers
+                                 mIncomeManager, mExpenseManager,          
+                                 mIncomeManagement, mExpenseManagement, mWalletManager,
+                                 mActiveRecordType, mActiveRecordId))      
 {
     mWindow.setKeyRepeatEnabled(false);
 
     loadTextures();
     loadFonts();
+
+    // --- AUTOMATIC CHECK ---
+    // Check for recurring transactions due today upon startup
+    RecurringManager recurringMgr;
+    recurringMgr.processDailyCheck(mIncomeManager, mExpenseManager);
 
     registerStates();
     
@@ -103,7 +110,6 @@ void Program::loadTextures() {
 }
 
 void Program::loadFonts() {
-    // Ensure these match the files in your assets folder
     mFontHolder.load(Fonts::ID::Dosis, "assets/Fonts/Dosis.ttf");
     mFontHolder.load(Fonts::ID::Pacifico, "assets/Fonts/Pacifico-Regular.ttf");
     mFontHolder.load(Fonts::ID::VTV323, "assets/Fonts/VT323-Regular.ttf");
@@ -113,16 +119,18 @@ void Program::loadFonts() {
 void Program::registerStates() {
     mStateStack.registerState<MenuState>(States::ID::Menu);
     mStateStack.registerState<TransactionState>(States::ID::Transaction);
-    mStateStack.registerState<RecurringTransactionState>(States::ID::RecurringTransaction);
     mStateStack.registerState<StatisticsState>(States::ID::Statistics);
 
-    // --- REGISTER NEW MASTER STATES ---
-    // This connects the "Master Management" button to your new class
+    // --- Management States ---
     mStateStack.registerState<MasterManagementState>(States::ID::Management);
-    
-    // Registers the Add and Edit screens
     mStateStack.registerState<MasterManagementAddState>(States::ID::ManagementAdd);
     mStateStack.registerState<MasterManagementEditState>(States::ID::ManagementEdit);
+
+    // --- Recurring States ---
+    // Note: States::ID::RecurringTransaction maps to the "Recurring" button in Menu
+    mStateStack.registerState<RecurringState>(States::ID::RecurringTransaction);
+    mStateStack.registerState<RecurringAddState>(States::ID::RecurringAdd);
+    mStateStack.registerState<RecurringEditState>(States::ID::RecurringEdit);
 }
 
 void Program::handleEvent(sf::Event& event) {

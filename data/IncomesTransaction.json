@@ -79,5 +79,41 @@
     "sourceName": "XX",
     "walletId": "",
     "walletName": ""
+  },
+  {
+    "amount": 5000.0,
+    "date": "2025-12-28",
+    "description": "Monthly salary (Auto-Recurring)",
+    "id": "1766918055880",
+    "sourceName": "Salary",
+    "walletId": "W1",
+    "walletName": ""
+  },
+  {
+    "amount": 2500.0,
+    "date": "2025-12-28",
+    "description": "Monthly salary (Auto-Recurring)",
+    "id": "1766918055152",
+    "sourceName": "Salary",
+    "walletId": "W1",
+    "walletName": ""
+  },
+  {
+    "amount": 0.0,
+    "date": "2025-12-28",
+    "description": "Manually Added (Auto-Recurring)",
+    "id": "1766919808540",
+    "sourceName": "DA",
+    "walletId": "10",
+    "walletName": ""
+  },
+  {
+    "amount": 25.0,
+    "date": "2025-12-28",
+    "description": "Manually Added (Auto-Recurring)",
+    "id": "1766920793972",
+    "sourceName": "Salary",
+    "walletId": "Cash\r",
+    "walletName": ""
   }
 ]

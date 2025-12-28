@@ -8,6 +8,8 @@ namespace States
         Menu,
         Transaction,
         RecurringTransaction,
+        RecurringEdit,
+        RecurringAdd,
         Statistics,
         Management,
         ManagementEdit,
