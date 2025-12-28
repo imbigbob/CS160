@@ -1,0 +1,20 @@
+[
+    {
+        "amount": 25.0,
+        "categoryName": "Cash",
+        "date": "2025-01-01",
+        "description": "CAsh",
+        "id": "",
+        "walletId": "",
+        "walletName": "Cash"
+    },
+    {
+        "amount": 2.0,
+        "categoryName": "Hi",
+        "date": "2025-10-10",
+        "description": "123123123",
+        "id": "",
+        "walletId": "",
+        "walletName": "Tablert"
+    }
+]

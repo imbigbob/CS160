@@ -1,0 +1,6 @@
+.vscode/
+[Bb]uild/
+*.exe
+*.sh
+CMakeLists.txt
+/CMakeLists.txt
