@@ -1,0 +1,56 @@
+[
+  {
+    "amount": 5000.0,
+    "date": "2024-06-01",
+    "description": "Monthly salary",
+    "id": "1",
+    "sourceName": "Salary",
+    "walletId": "W1",
+    "walletName": ""
+  },
+  {
+    "amount": 36.0,
+    "date": "2025-28-11",
+    "description": "Gift From A Friend",
+    "id": "",
+    "sourceName": "Gift",
+    "walletId": "",
+    "walletName": ""
+  },
+  {
+    "amount": 666.0,
+    "date": "2025-28-11",
+    "description": "XXX",
+    "id": "",
+    "sourceName": "Source 1",
+    "walletId": "",
+    "walletName": ""
+  },
+  {
+    "amount": 250.0,
+    "date": "2025-11-20",
+    "description": "Eat",
+    "id": "",
+    "sourceName": "Food",
+    "walletId": "",
+    "walletName": ""
+  },
+  {
+    "amount": 25.0,
+    "date": "2025-25-12",
+    "description": "Eating",
+    "id": "",
+    "sourceName": "Food",
+    "walletId": "",
+    "walletName": ""
+  },
+  {
+    "amount": 25.0,
+    "date": "2025-10-10",
+    "description": "Cash",
+    "id": "",
+    "sourceName": "Cash",
+    "walletId": "",
+    "walletName": ""
+  }
+]
