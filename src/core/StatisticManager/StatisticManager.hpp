@@ -4,15 +4,14 @@
 #include <string>
 #include <vector>
 
-#include "core/ExpenseManager/ExpenseManager.hpp"
-#include "core/IncomeManager/IncomeManager.hpp"
+#include "core/TransactionManager/TransactionManager.hpp"
 #include "core/DynamicArray/DynamicArray.hpp"
 #include <ctime>
 class StatisticManager
 {
 private:
-    IncomeManager incomeManager;
-    ExpenseManager expenseManager;
+    TransactionManager incomeManager{"data/IncomesTransaction.json"};
+    TransactionManager expenseManager{"data/ExpensesTransaction.json"};
     std::string startDate; // dd/mm/yyyy
     std::string endDate;   // dd/mm/yyyy
 
@@ -20,8 +19,6 @@ public:
     std::string setDate();
     StatisticManager()
     {
-        incomeManager = IncomeManager();
-        expenseManager = ExpenseManager();
         startDate = "01/01/2023";
         endDate = setDate();
     }; // assign the date open app or the first date in this month
@@ -38,9 +35,9 @@ public:
         const std::string &start, const std::string &end);
     double annualIncomeOverview(DynamicArray<int> year);
     double annualExpenseOverview(DynamicArray<int> year);
-    double annualIncomeBreakdownBySource(
+    double annualIncomeBreakdownByType(
         DynamicArray<int> year, const std::string &type);
-    double annualExpenseBreakdownByCategory(
+    double annualExpenseBreakdownByType(
         DynamicArray<int> year, const std::string &type);
 };
 #endif

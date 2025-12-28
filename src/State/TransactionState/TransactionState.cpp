@@ -5,6 +5,8 @@
 #include "../../Utility/Utility.hpp"
 #include "../GUI/Button/Button.hpp"
 #include "../TransactionAddState/TransactionAddState.hpp"
+// #include "../TransactionEditState/TransactionEditState.hpp"
+
 // Define constants for easier adjustments
 const float TABLE_X = 150.f;
 const float TABLE_Y = 150.f; // Header Y position
@@ -33,7 +35,8 @@ TransactionState::TransactionState(StateStack &stack, Context context)
     auto addButton = std::make_shared<GUI::Button>(
         *context.fontHolder, *context.textureHolder, "Add");
     addButton->setPosition(500.f, 50.f);
-    addButton->setCallback([this]() { /* TODO: Add transaction */ });
+    addButton->setCallback([this]()
+                           { handleAdd(); });
 
     auto toggleButton = std::make_shared<GUI::Button>(
         *context.fontHolder, *context.textureHolder, "Show Expense");
@@ -254,5 +257,18 @@ void TransactionState::draw()
     window.draw(mGUIContainer);
 }
 void TransactionState::handleAdd()
+{
+    TransactionAddState::setPayload(static_cast<int>(mMode),
+                                    (mMode == Mode::Income)
+                                        ? &mIncomeManager
+                                        : &mExpenseManager);
+    requestStackPush(States::ID::TransactionAdd);
+}
+
+void TransactionState::handleEdit()
+{
+}
+
+void TransactionState::handleDelete()
 {
 }

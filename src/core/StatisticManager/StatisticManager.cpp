@@ -41,21 +41,21 @@ double StatisticManager::getNetBalanceInTimeRange(
 
 double StatisticManager::annualIncomeOverview(DynamicArray<int> year)
 {
-    return incomeManager.anualIncomeOverview(year);
+    return incomeManager.anualTransactionOverview(year);
 }
 double StatisticManager::annualExpenseOverview(DynamicArray<int> year)
 {
-    return expenseManager.anualExpenseOverview(year);
+    return expenseManager.anualTransactionOverview(year);
 }
 
-double StatisticManager::annualIncomeBreakdownBySource(
+double StatisticManager::annualIncomeBreakdownByType(
     DynamicArray<int> year, const std::string &type)
 {
-    return incomeManager.incomeBreakdownBySource(year, type);
+    return incomeManager.transactionBreakdownByType(year, type);
 }
 
-double StatisticManager::annualExpenseBreakdownByCategory(
+double StatisticManager::annualExpenseBreakdownByType(
     DynamicArray<int> year, const std::string &type)
 {
-    return expenseManager.expenseBreakdownByCategory(year, type);
+    return expenseManager.transactionBreakdownByType(year, type);
 }

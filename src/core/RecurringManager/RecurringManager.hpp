@@ -5,8 +5,7 @@
 #include <string>
 
 #include "core/DynamicArray/DynamicArray.hpp"
-#include "core/IncomeManager/IncomeManager.hpp"
-#include "core/ExpenseManager/ExpenseManager.hpp"
+#include "core/TransactionManager/TransactionManager.hpp"
 struct RecurringTransaction
 {
     // Similar to Income and Expense
@@ -28,8 +27,8 @@ class RecurringManager
 private:
     DynamicArray<RecurringTransaction> incomeRules;
     DynamicArray<RecurringTransaction> expenseRules;
-    IncomeManager incomeManagers;
-    ExpenseManager expenseManagers;
+    TransactionManager incomeManagers{"data/IncomesTransaction.json"};
+    TransactionManager expenseManagers{"data/ExpensesTransaction.json"};
 
     std::string incomeFilepath;
     std::string expenseFilepath;

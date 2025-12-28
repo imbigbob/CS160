@@ -1,64 +1,80 @@
-#include "ManagementAddState.hpp"
+#include "TransactionAddState.hpp"
 #include <iostream>
 #include "../../model/Type/Type.hpp"
+#include "../WarningState/WarningState.hpp"
 // Static Definitions
-int ManagementAddState::sPendingMode = 0;
-TypeManager *ManagementAddState::sPendingTypeManager = nullptr;
+int TransactionAddState::sPendingMode = 0;
+TransactionManager *TransactionAddState::sPendingTransactionManager = nullptr;
 
-void ManagementAddState::setPayload(int mode, TypeManager *tManager)
+void TransactionAddState::setPayload(int mode, TransactionManager *tManager)
 {
     sPendingMode = mode;
-    sPendingTypeManager = tManager;
+    sPendingTransactionManager = tManager;
 }
 
-ManagementAddState::ManagementAddState(StateStack &stack, Context context)
+TransactionAddState::TransactionAddState(StateStack &stack, Context context)
     : State(stack, context)
 {
     // 1. Retrieve Data
     mAddingMode = sPendingMode;
-    mTypeManager = sPendingTypeManager;
+    mTransactionManager = sPendingTransactionManager;
 
     sf::RenderWindow &window = *context.window;
     sf::Vector2f windowSize(window.getSize());
 
-    // --- 3. GUI SETUP ---
+    sf::Vector2f center(
+        context.window->getSize().x / 2.f,
+        context.window->getSize().y / 2.f);
 
-    // A. Create Label
-    auto label = std::make_shared<GUI::Label>("Add Item Name:", *context.fontHolder);
-    label->setScale(2.f, 2.f);
-    label->setPosition(windowSize.x / 2.f - 200.f, windowSize.y / 2.f - 80.f);
-    label->setTextColor(sf::Color::Black); // Ensure visibility
-    mGUIContainer.addComponent(label);
+    const float startY = center.y - 180.f;
+    const float gapY = 45.f;
+    const float startX = center.x - 350.f;
 
-    // B. Create InputBox (Using your new class)
-    mInputBox = std::make_shared<GUI::InputBox>(*context.fontHolder);
-    mInputBox->setScale(2.f, 2.f);
-    mInputBox->setPosition(windowSize.x / 2.f - 200.f, windowSize.y / 2.f - 40.f);
+    auto addField = [&](const std::string &label, float y)
+    {
+        auto l = std::make_shared<GUI::Label>(label, *context.fontHolder);
+        l->setPosition(startX, y);
+        mGUIContainer.addComponent(l);
+    };
 
-    mInputBox->activate(); // Auto-focus
-    mGUIContainer.addComponent(mInputBox);
+    auto addBox = [&](float y)
+    {
+        auto b = std::make_shared<GUI::InputBox>(*context.fontHolder);
+        b->setPosition(startX + 140.f, y);
+        b->setScale(1.5f, 1.5f);
+        mGUIContainer.addComponent(b);
+        return b;
+    };
 
-    // C. Create Save Button
-    auto saveButton = std::make_shared<GUI::Button>(*context.fontHolder, *context.textureHolder, "Save");
-    saveButton->setPosition(windowSize.x / 2.f - 120.f, windowSize.y / 2.f + 80.f);
-    saveButton->setCallback([this]()
-                            {
-                                saveTypeData();
-                                requestStackPop(); // Go back after saving
-                            });
-    mGUIContainer.addComponent(saveButton);
+    addField("Amount:", startY);
+    mAmountBox = addBox(startY);
 
-    // D. Create Cancel Button
-    auto cancelButton = std::make_shared<GUI::Button>(*context.fontHolder, *context.textureHolder, "Cancel");
-    cancelButton->setPosition(windowSize.x / 2.f + 120.f, windowSize.y / 2.f + 80.f);
-    cancelButton->setCallback([this]()
-                              {
-                                  requestStackPop(); // Just go back
-                              });
-    mGUIContainer.addComponent(cancelButton);
+    addField("Wallet ID:", startY + gapY);
+    mWalletBox = addBox(startY + gapY);
+
+    addField("Type ID:", startY + gapY * 2);
+    mTypeBox = addBox(startY + gapY * 2);
+
+    addField("Description:", startY + gapY * 3);
+    mDescBox = addBox(startY + gapY * 3);
+
+    auto saveBtn = std::make_shared<GUI::Button>(
+        *context.fontHolder, *context.textureHolder, "Save");
+    saveBtn->setPosition(center.x - 110.f, startY + gapY * 7 + 50.f);
+    saveBtn->setCallback([this]()
+                         { save(); });
+
+    auto cancelBtn = std::make_shared<GUI::Button>(
+        *context.fontHolder, *context.textureHolder, "Cancel");
+    cancelBtn->setPosition(center.x + 110.f, startY + gapY * 7 + 50.f);
+    cancelBtn->setCallback([this]()
+                           { requestStackPop(); });
+
+    mGUIContainer.addComponent(saveBtn);
+    mGUIContainer.addComponent(cancelBtn);
 }
 
-void ManagementAddState::draw()
+void TransactionAddState::draw()
 {
     sf::RenderWindow &window = *getContext().window;
     window.setView(window.getDefaultView());
@@ -73,12 +89,12 @@ void ManagementAddState::draw()
     window.draw(mGUIContainer);
 }
 
-bool ManagementAddState::update(sf::Time deltaTime)
+bool TransactionAddState::update(sf::Time deltaTime)
 {
     return true;
 }
 
-bool ManagementAddState::handleEvent(const sf::Event &event)
+bool TransactionAddState::handleEvent(const sf::Event &event)
 {
     // Delegate event handling to the container
     // This handles typing in InputBox and clicking Buttons
@@ -87,20 +103,29 @@ bool ManagementAddState::handleEvent(const sf::Event &event)
     // Optional: Allow 'Enter' key to save
     if (event.type == sf::Event::KeyPressed && event.key.code == sf::Keyboard::Enter)
     {
-        saveTypeData();
+        save();
         requestStackPop();
     }
 
     return false;
 }
 
-void ManagementAddState::saveTypeData()
+void TransactionAddState::save()
 {
-    if (mTypeManager && !mInputBox->getText().empty())
-    {
 
-        std::string name = mInputBox->getText();
-        Type newType(name);
-        mTypeManager->addType(newType);
+    if (mAmountBox->getText().empty() ||
+        mWalletBox->getText().empty() ||
+        mTypeBox->getText().empty() ||
+        mDescBox->getText().empty())
+    {
+        WarningState::setMessage("Please fill in all required fields!");
+        requestStackPush(States::ID::Warning);
+        return;
     }
+    mTransactionManager->add(Transaction(
+        "[Manual Entry]",
+        std::stof(mAmountBox->getText()),
+        mWalletBox->getText(),
+        mTypeBox->getText(),
+        mDescBox->getText()));
 }

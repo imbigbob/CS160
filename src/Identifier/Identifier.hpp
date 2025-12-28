@@ -7,10 +7,15 @@ namespace States
     {
         Menu,
         Transaction,
+        TransactionAdd,
+        TransactionEdit,
+
         Recurring,
         RecurringEdit,
         RecurringAdd,
+
         Statistics,
+
         Management,
         ManagementEdit,
         ManagementAdd,

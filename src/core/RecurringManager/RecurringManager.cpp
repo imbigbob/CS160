@@ -6,8 +6,7 @@
 #include <iomanip>
 #include <nlohmann/json.hpp>
 #include <cstring>
-#include "model/Income/Income.hpp"
-#include "model/Expense/Expense.hpp"
+#include "model/Transaction/Transaction.hpp"
 
 // File path
 RecurringManager::RecurringManager()
@@ -17,8 +16,6 @@ RecurringManager::RecurringManager()
 
     loadFromDB(incomeFilepath, incomeRules, 1);
     loadFromDB(expenseFilepath, expenseRules, 2);
-    incomeManagers = IncomeManager();
-    expenseManagers = ExpenseManager();
 }
 
 // Rule adding
@@ -188,8 +185,8 @@ void RecurringManager::processRecurring()
             continue;
 
         // Income profile
-        Income inc(rule.type, rule.amount,
-                   rule.walletId, "", rule.description + " [Auto Rec]");
+        Transaction inc("[Auto Rec]", rule.amount,
+                        rule.walletId, "", rule.description);
         incomeManagers.add(inc); // from IncomeManager
         rule.lastAppliedYM = currentMonth;
         incomeProcessed = true;
@@ -210,8 +207,8 @@ void RecurringManager::processRecurring()
             continue;
 
         // Expense profile
-        Expense exp(rule.type, rule.amount,
-                    rule.walletId, "", rule.description + " [Auto Rec]");
+        Transaction exp("[Auto Rec]", rule.amount,
+                        rule.walletId, "", rule.description);
 
         expenseManagers.add(exp); // from ExpenseManager
         expenseProcessed = true;

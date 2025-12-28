@@ -1,8 +1,7 @@
 #ifndef TRANSACTION_STATE_HPP
 #define TRANSACTION_STATE_HPP
 
-#include "../../core/ExpenseManager/ExpenseManager.hpp"
-#include "../../core/IncomeManager/IncomeManager.hpp"
+#include "../../core/TransactionManager/TransactionManager.hpp"
 #include "../GUI/Container/Container.hpp"
 #include "../State.hpp"
 
@@ -19,6 +18,8 @@ private:
     void reloadTable();
     void updateScrollView(); // Helper to keep scroll in bounds
     void handleAdd();
+    void handleEdit();
+    void handleDelete();
 
 private:
     sf::Sprite mBackgroundSprite;
@@ -27,8 +28,8 @@ private:
     // --- Table Headers (Static) ---
     sf::RectangleShape mTableHeader;
     std::vector<sf::Text> mHeaderTexts;
-    IncomeManager mIncomeManager;
-    ExpenseManager mExpenseManager;
+    TransactionManager mIncomeManager{"data/IncomesTransaction.json"};
+    TransactionManager mExpenseManager{"data/ExpensesTransaction.json"};
 
     // --- Table Content (Scrollable) ---
     std::vector<sf::RectangleShape> mRowRects;

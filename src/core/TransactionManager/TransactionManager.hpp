@@ -1,20 +1,25 @@
-
-#pragma once
+#ifndef TRANSACTION_MANAGER_HPP
+#define TRANSACTION_MANAGER_HPP
 #include "core/DynamicArray/DynamicArray.hpp"
-#include "model/Expense/Expense.hpp"
-#include "model/Income/Income.hpp"
+#include "model/Transaction/Transaction.hpp"
 class TransactionManager
 {
 private:
-    DynamicArray<Income> incomes;
-    DynamicArray<Expense> expenses;
-    int nextId;
+    DynamicArray<Transaction> list;
+    std::string filePath;
 
 public:
-    TransactionManager();
-    void addIncome(const Income &inc);
-    void addExpense(const Expense &exp);
+    TransactionManager(std::string filePath);
 
-    DynamicArray<Income> &getIncomes();
-    DynamicArray<Expense> &getExpenses();
+    void add(const Transaction &w);
+    void remove(int id);
+
+    double getTotalBalance();
+    DynamicArray<Transaction> &getAll();
+    void updateDB();
+    double getBalanceInTimeRange(std::string start, std::string end);
+    double anualTransactionOverview(DynamicArray<int> year);
+    double transactionBreakdownByType(DynamicArray<int> year, const std::string &type);
 };
+
+#endif

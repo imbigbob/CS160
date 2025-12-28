@@ -169,8 +169,8 @@ void StatisticsState::updateStatistics()
     // Annual / Breakdown
     mValueLabels["annual_inc"]->setText(formatMoney(mStatisticManager.annualIncomeOverview(years)));
     mValueLabels["annual_exp"]->setText(formatMoney(mStatisticManager.annualExpenseOverview(years)));
-    mValueLabels["src_break"]->setText(formatMoney(mStatisticManager.annualIncomeBreakdownBySource(years, src)));
-    mValueLabels["cat_break"]->setText(formatMoney(mStatisticManager.annualExpenseBreakdownByCategory(years, cat)));
+    mValueLabels["src_break"]->setText(formatMoney(mStatisticManager.annualIncomeBreakdownByType(years, src)));
+    mValueLabels["cat_break"]->setText(formatMoney(mStatisticManager.annualExpenseBreakdownByType(years, cat)));
 }
 
 DynamicArray<int> StatisticsState::parseYears(const std::string &text)

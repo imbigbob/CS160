@@ -49,7 +49,6 @@ public:
         this->description = description;
     }
 
-    virtual int getType() const = 0; // 1=Income, 2=Expense
     std::string getDate() const;
     std::string setDate(std::string date) { return this->date = date; }
     double getAmount() const;
