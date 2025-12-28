@@ -4,7 +4,7 @@
 
 #include "../../Utility/Utility.hpp"
 #include "../GUI/Button/Button.hpp"
-
+#include "../TransactionAddState/TransactionAddState.hpp"
 // Define constants for easier adjustments
 const float TABLE_X = 150.f;
 const float TABLE_Y = 150.f; // Header Y position
@@ -252,4 +252,7 @@ void TransactionState::draw()
     // 4. Draw GUI Overlay (Buttons) - Switch back to default
     window.setView(window.getDefaultView()); // <--- RESET CAMERA
     window.draw(mGUIContainer);
+}
+void TransactionState::handleAdd()
+{
 }

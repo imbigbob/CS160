@@ -6,19 +6,21 @@
 #include "../GUI/Container/Container.hpp"
 #include "../State.hpp"
 
-class TransactionState : public State {
-   public:
-    TransactionState(StateStack& stack, Context context);
+class TransactionState : public State
+{
+public:
+    TransactionState(StateStack &stack, Context context);
 
     virtual void draw() override;
     virtual bool update(sf::Time deltaTime) override;
-    virtual bool handleEvent(const sf::Event& event) override;
+    virtual bool handleEvent(const sf::Event &event) override;
 
-   private:
+private:
     void reloadTable();
-    void updateScrollView();  // Helper to keep scroll in bounds
+    void updateScrollView(); // Helper to keep scroll in bounds
+    void handleAdd();
 
-   private:
+private:
     sf::Sprite mBackgroundSprite;
     GUI::Container mGUIContainer;
 
@@ -33,13 +35,17 @@ class TransactionState : public State {
     std::vector<sf::Text> mRowTexts;
 
     // --- Scrolling Mechanics ---
-    sf::View mTableView;         // The camera for the list
-    sf::FloatRect mTableBounds;  // The visible area on screen
-    float mScrollY;              // Current scroll position
-    float mTotalContentHeight;   // Total height of all rows combined
+    sf::View mTableView;        // The camera for the list
+    sf::FloatRect mTableBounds; // The visible area on screen
+    float mScrollY;             // Current scroll position
+    float mTotalContentHeight;  // Total height of all rows combined
 
     // Mode tracking
-    enum class Mode { Income, Expense };
+    enum class Mode
+    {
+        Income,
+        Expense
+    };
     Mode mMode = Mode::Income;
 };
 #endif
