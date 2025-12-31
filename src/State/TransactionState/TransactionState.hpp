@@ -4,7 +4,9 @@
 #include "../../core/TransactionManager/TransactionManager.hpp"
 #include "../GUI/Container/Container.hpp"
 #include "../State.hpp"
+#include "../../core/DynamicArray/DynamicArray.hpp"
 
+#include "../../core/TypeManager/TypeManager.hpp"
 class TransactionState : public State
 {
 public:
@@ -18,22 +20,27 @@ private:
     void reloadTable();
     void updateScrollView(); // Helper to keep scroll in bounds
     void handleAdd();
-    void handleEdit();
-    void handleDelete();
+    void handleEdit(int index);
+    void handleDelete(int index);
 
 private:
     sf::Sprite mBackgroundSprite;
     GUI::Container mGUIContainer;
 
+    DynamicArray<sf::Sprite> mEditSprites;
+    DynamicArray<sf::Sprite> mDeleteSprites;
+
     // --- Table Headers (Static) ---
     sf::RectangleShape mTableHeader;
-    std::vector<sf::Text> mHeaderTexts;
+    DynamicArray<sf::Text> mHeaderTexts;
     TransactionManager mIncomeManager{"data/IncomesTransaction.json"};
     TransactionManager mExpenseManager{"data/ExpensesTransaction.json"};
-
+    TypeManager walletTypeManager{"WalletTypes"};
+    TypeManager incomeTypeManager{"IncomeTypes"};
+    TypeManager expenseTypeManager{"ExpenseTypes"};
     // --- Table Content (Scrollable) ---
-    std::vector<sf::RectangleShape> mRowRects;
-    std::vector<sf::Text> mRowTexts;
+    DynamicArray<sf::RectangleShape> mRowRects;
+    DynamicArray<sf::Text> mRowTexts;
 
     // --- Scrolling Mechanics ---
     sf::View mTableView;        // The camera for the list

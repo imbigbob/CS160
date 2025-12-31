@@ -4,24 +4,24 @@
 #include <SFML/Graphics.hpp>
 #include <map>
 #include <memory>
-#include <vector>
 
+#include "../core/DynamicArray/DynamicArray.hpp"
 #include "../Identifier/Identifier.hpp"
 
 template <typename Resource, typename Identifier>
-class ResourceHolder {
-   public:
-    void load(Identifier id, const std::string& filename);
+class ResourceHolder
+{
+public:
+    void load(Identifier id, const std::string &filename);
     void load(Identifier id1, Identifier id2);
 
-    Resource& get(Identifier id);
-    const Resource& get(Identifier id) const;
+    Resource &get(Identifier id);
+    const Resource &get(Identifier id) const;
 
     Identifier getSharedID(
-        Identifier id, const std::vector<Identifier>& possibleIDs
-    ) const;
+        Identifier id, const DynamicArray<Identifier> &possibleIDs) const;
 
-   private:
+private:
     std::map<Identifier, std::shared_ptr<Resource>> mResourceMap;
 };
 

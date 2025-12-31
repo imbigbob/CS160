@@ -1,17 +1,17 @@
 #include "TransactionState.hpp"
 
 #include <fstream>
-
+#include <iostream>
 #include "../../Utility/Utility.hpp"
 #include "../GUI/Button/Button.hpp"
 #include "../TransactionAddState/TransactionAddState.hpp"
-// #include "../TransactionEditState/TransactionEditState.hpp"
+#include "../TransactionEditState/TransactionEditState.hpp"
 
 // Define constants for easier adjustments
 const float TABLE_X = 150.f;
 const float TABLE_Y = 150.f; // Header Y position
 const float HEADER_HEIGHT = 40.f;
-const float ROW_HEIGHT = 40.f;
+const float ROW_HEIGHT = 60.f;
 
 TransactionState::TransactionState(StateStack &stack, Context context)
     : State(stack, context), mScrollY(0.f), mTotalContentHeight(0.f)
@@ -57,20 +57,24 @@ TransactionState::TransactionState(StateStack &stack, Context context)
     mGUIContainer.addComponent(toggleButton);
 
     // --- HEADER SETUP ---
-    float colWidth[] = {180.f, 180.f, 120.f, 200.f};
+    float colWidth[] = {180.f, 180.f, 180.f, 120.f, 200.f, 160.f};
 
     mTableHeader.setSize(
         sf::Vector2f(
-            colWidth[0] + colWidth[1] + colWidth[2] + colWidth[3], HEADER_HEIGHT));
+            colWidth[0] + colWidth[1] + colWidth[2] + colWidth[3] + colWidth[4] + colWidth[5], HEADER_HEIGHT));
     mTableHeader.setPosition(TABLE_X, TABLE_Y);
     mTableHeader.setFillColor(sf::Color(230, 230, 230));
 
     sf::Font &font = context.fontHolder->get(Fonts::ID::Dosis);
-    std::vector<std::string> headers = {
-        "Date", "Source", "Amount", "Description"};
+    DynamicArray<std::string> headers;
+    headers.pushBack("Date");
+    headers.pushBack("Name");
+    headers.pushBack("Amount");
+    headers.pushBack("Description");
+    headers.pushBack("");
     float currentX = TABLE_X;
 
-    for (int i = 0; i < headers.size(); i++)
+    for (int i = 0; i < headers.getSize(); i++)
     {
         sf::Text text;
         text.setFont(font);
@@ -78,7 +82,7 @@ TransactionState::TransactionState(StateStack &stack, Context context)
         text.setCharacterSize(20);
         text.setFillColor(sf::Color::Black);
         text.setPosition(currentX + 10.f, TABLE_Y + 8.f);
-        mHeaderTexts.push_back(text);
+        mHeaderTexts.pushBack(text);
         currentX += colWidth[i];
     }
 
@@ -111,13 +115,14 @@ void TransactionState::reloadTable()
 {
     mRowRects.clear();
     mRowTexts.clear();
-
+    mEditSprites.clear();
+    mDeleteSprites.clear();
     // Reset Scroll on reload
     mScrollY = 0.f;
     updateScrollView();
 
     float tableX = TABLE_X;
-    float colWidth[] = {180.f, 180.f, 120.f, 200.f};
+    float colWidth[] = {180.f, 180.f, 180.f, 120.f, 200.f, 160.f};
 
     // Important: We start drawing at Y position relative to the View's start
     // The View starts at TABLE_Y + HEADER_HEIGHT.
@@ -130,17 +135,20 @@ void TransactionState::reloadTable()
     // Note: Assuming DynamicArray has standard iterator or access
     int count = (mMode == Mode::Income) ? mIncomeManager.getAll().getSize()
                                         : mExpenseManager.getAll().getSize();
+    const sf::Texture &editTexture = getContext().textureHolder->get(Textures::ID::Edit);
+    const sf::Texture &deleteTexture = getContext().textureHolder->get(Textures::ID::Bin);
 
     for (int i = 0; i < count; i++)
     {
         // Retrieve data based on mode
-        std::string date, name, amountStr, desc;
+        std::string date, name, walletName, amountStr, desc;
 
         if (mMode == Mode::Income)
         {
             const auto &r = mIncomeManager.getAll()[i];
             date = r.getDate();
-            name = r.getName();
+            name = incomeTypeManager.getTypeNameById(r.getTypeId());
+            walletName = walletTypeManager.getTypeNameById(r.getWalletId());
             amountStr = std::to_string(r.getAmount());
             desc = r.getDescription();
         }
@@ -148,7 +156,8 @@ void TransactionState::reloadTable()
         {
             const auto &r = mExpenseManager.getAll()[i];
             date = r.getDate();
-            name = r.getName();
+            name = expenseTypeManager.getTypeNameById(r.getTypeId());
+            walletName = walletTypeManager.getTypeNameById(r.getWalletId());
             amountStr = std::to_string(r.getAmount());
             desc = r.getDescription();
         }
@@ -157,16 +166,20 @@ void TransactionState::reloadTable()
         sf::RectangleShape rowRect;
         rowRect.setSize(
             sf::Vector2f(
-                colWidth[0] + colWidth[1] + colWidth[2] + colWidth[3],
+                colWidth[0] + colWidth[1] + colWidth[2] + colWidth[3] + colWidth[4] + colWidth[5],
                 ROW_HEIGHT));
         rowRect.setPosition(tableX, currentY);
         rowRect.setFillColor(sf::Color(245, 245, 245));
-        mRowRects.push_back(rowRect);
+        mRowRects.pushBack(rowRect);
 
         // Row Text
-        std::vector<std::string> items = {date, name, amountStr, desc};
+        DynamicArray<std::string> items;
+        items.pushBack(date);
+        items.pushBack(name);
+        items.pushBack(amountStr);
+        items.pushBack(desc);
         float cx = tableX;
-        for (int col = 0; col < items.size(); col++)
+        for (int col = 0; col < items.getSize(); col++)
         {
             sf::Text t;
             t.setFont(font);
@@ -174,9 +187,20 @@ void TransactionState::reloadTable()
             t.setCharacterSize(18);
             t.setFillColor(sf::Color::Black);
             t.setPosition(cx + 10.f, currentY + 8.f);
-            mRowTexts.push_back(t);
+            mRowTexts.pushBack(t);
             cx += colWidth[col];
         }
+        sf::Sprite editSprite(editTexture);
+        // Scale if texture is too big (optional, e.g., fit to 24x24)
+        // editSprite.setScale(24.f / editTexture.getSize().x, 24.f / editTexture.getSize().y);
+        editSprite.setPosition(cx + 10.f, currentY + 8.f);
+        mEditSprites.pushBack(editSprite);
+
+        // Setup Delete Icon (Position it after Edit icon)
+        sf::Sprite delSprite(deleteTexture);
+        // delSprite.setScale(24.f / deleteTexture.getSize().x, 24.f / deleteTexture.getSize().y);
+        delSprite.setPosition(cx + 80.f, currentY + 8.f); // Offset x by 40-50px
+        mDeleteSprites.pushBack(delSprite);
         currentY += ROW_HEIGHT;
     }
 
@@ -187,7 +211,7 @@ void TransactionState::reloadTable()
 bool TransactionState::handleEvent(const sf::Event &event)
 {
     mGUIContainer.handleEvent(event, *getContext().window);
-
+    sf::RenderWindow &window = *getContext().window;
     // Handle Scrolling
     if (event.type == sf::Event::MouseWheelScrolled)
     {
@@ -201,6 +225,38 @@ bool TransactionState::handleEvent(const sf::Event &event)
         }
     }
 
+    if (event.type == sf::Event::MouseButtonPressed)
+    {
+        if (event.mouseButton.button == sf::Mouse::Left)
+        {
+            // 1. Get Mouse Position relative to the window
+            sf::Vector2i mousePosRaw = sf::Mouse::getPosition(window);
+
+            // 2. Convert to World Coordinates inside the Table View
+            // This accounts for the scroll position automatically!
+            sf::Vector2f mousePos = window.mapPixelToCoords(mousePosRaw, mTableView);
+
+            // 3. Check collisions with Edit Buttons
+            for (size_t i = 0; i < mEditSprites.getSize(); ++i)
+            {
+                if (mEditSprites[i].getGlobalBounds().contains(mousePos))
+                {
+                    handleEdit(i);
+                    return true; // Input handled
+                }
+            }
+
+            // 4. Check collisions with Delete Buttons
+            for (size_t i = 0; i < mDeleteSprites.getSize(); ++i)
+            {
+                if (mDeleteSprites[i].getGlobalBounds().contains(mousePos))
+                {
+                    handleDelete(i);
+                    return true; // Input handled
+                }
+            }
+        }
+    }
     return false;
 }
 
@@ -229,7 +285,11 @@ void TransactionState::updateScrollView()
     mTableView.setCenter(mTableBounds.width / 2.f, defaultCenterY + mScrollY);
 }
 
-bool TransactionState::update(sf::Time deltaTime) { return true; }
+bool TransactionState::update(sf::Time deltaTime)
+{
+    reloadTable();
+    return true;
+}
 
 void TransactionState::draw()
 {
@@ -241,16 +301,21 @@ void TransactionState::draw()
 
     // 2. Draw Header (Fixed position)
     window.draw(mTableHeader);
-    for (auto &t : mHeaderTexts)
-        window.draw(t);
+    for (int i = 0; i < mHeaderTexts.getSize(); i++)
+        window.draw(mHeaderTexts[i]);
 
     // 3. Draw Table Content (Scrolled View)
     window.setView(mTableView); // <--- SWITCH CAMERA
 
-    for (auto &r : mRowRects)
-        window.draw(r);
-    for (auto &t : mRowTexts)
-        window.draw(t);
+    for (int i = 0; i < mRowRects.getSize(); i++)
+        window.draw(mRowRects[i]);
+    for (int i = 0; i < mRowTexts.getSize(); i++)
+        window.draw(mRowTexts[i]);
+
+    for (int i = 0; i < mEditSprites.getSize(); i++)
+        window.draw(mEditSprites[i]);
+    for (int i = 0; i < mDeleteSprites.getSize(); i++)
+        window.draw(mDeleteSprites[i]);
 
     // 4. Draw GUI Overlay (Buttons) - Switch back to default
     window.setView(window.getDefaultView()); // <--- RESET CAMERA
@@ -265,10 +330,23 @@ void TransactionState::handleAdd()
     requestStackPush(States::ID::TransactionAdd);
 }
 
-void TransactionState::handleEdit()
+void TransactionState::handleEdit(int index)
 {
+    TransactionEditState::setPayload(
+        index,
+        static_cast<int>(mMode),
+        (mMode == Mode::Income) ? &mIncomeManager : &mExpenseManager);
+    requestStackPush(States::ID::TransactionEdit);
 }
 
-void TransactionState::handleDelete()
+void TransactionState::handleDelete(int index)
 {
+    if (mMode == Mode::Income)
+    {
+        mIncomeManager.remove(index);
+    }
+    else
+    {
+        mExpenseManager.remove(index);
+    }
 }

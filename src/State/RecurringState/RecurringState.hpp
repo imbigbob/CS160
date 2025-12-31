@@ -2,7 +2,6 @@
 #define _RECURRING_STATE_HPP
 
 #include <memory>
-#include <vector>
 
 #include "../../Utility/Utility.hpp"
 #include "../GUI/Button/Button.hpp"
@@ -10,6 +9,7 @@
 #include "../GUI/Label/Label.hpp"
 #include "../State.hpp"
 #include "../../core/RecurringManager/RecurringManager.hpp"
+#include "../../core/DynamicArray/DynamicArray.hpp"
 class RecurringState : public State
 {
 public:
@@ -35,8 +35,8 @@ private:
 
     Mode currentMode;
     sf::Sprite mBackgroundSprite;
-    std::vector<sf::Sprite> mEditSprites;
-    std::vector<sf::Sprite> mDeleteSprites;
+    DynamicArray<sf::Sprite> mEditSprites;
+    DynamicArray<sf::Sprite> mDeleteSprites;
     bool mNeedsRefresh = false;
 
     // Helper to handle the actual logic
@@ -51,12 +51,11 @@ private:
     RecurringManager recurringManager;
 
     sf::RectangleShape mTableHeader;
-    std::vector<sf::Text> mHeaderTexts;
+    DynamicArray<sf::Text> mHeaderTexts;
 
     // --- Table Content (Scrollable) ---
-    std::vector<sf::RectangleShape> mRowRects; // Backgrounds for rows
-    std::vector<sf::Text> mRowTexts;           // Text data for rows
-
+    DynamicArray<sf::RectangleShape> mRowRects; // Backgrounds for rows
+    DynamicArray<sf::Text> mRowTexts;           // Text data for rows
     // --- Scrolling Mechanics ---
     sf::View mTableView;        // Camera for the list
     sf::FloatRect mTableBounds; // Visible area on screen

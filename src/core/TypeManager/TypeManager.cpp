@@ -1,7 +1,8 @@
 #include "TypeManager.hpp"
 
 #include <nlohmann/json.hpp>
-
+#include <cstring>
+#include <string>
 using json = nlohmann::json;
 
 #include <fstream>
@@ -108,4 +109,17 @@ bool TypeManager::isTypeIdExist(const std::string &id) const
         }
     }
     return false;
+}
+
+std::string TypeManager::getTypeNameById(const std::string &id) const
+{
+    for (size_t i = 0; i < types.getSize(); ++i)
+    {
+        std::cout << "Checking type ID: " << types[i].getId() << " against " << id << std::endl;
+        if (id.compare(types[i].getId()) == 0)
+        {
+            return types[i].getName();
+        }
+    }
+    return "Unknown";
 }

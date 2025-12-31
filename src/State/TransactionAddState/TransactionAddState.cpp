@@ -46,7 +46,7 @@ TransactionAddState::TransactionAddState(StateStack &stack, Context context)
         return b;
     };
 
-    addField("Amount:", startY);
+        addField("Amount:", startY);
     mAmountBox = addBox(startY);
 
     addField("Wallet ID:", startY + gapY);
@@ -60,13 +60,13 @@ TransactionAddState::TransactionAddState(StateStack &stack, Context context)
 
     auto saveBtn = std::make_shared<GUI::Button>(
         *context.fontHolder, *context.textureHolder, "Save");
-    saveBtn->setPosition(center.x - 110.f, startY + gapY * 7 + 50.f);
+    saveBtn->setPosition(center.x - 110.f, startY + gapY * 6 + 50.f);
     saveBtn->setCallback([this]()
                          { save(); });
 
     auto cancelBtn = std::make_shared<GUI::Button>(
         *context.fontHolder, *context.textureHolder, "Cancel");
-    cancelBtn->setPosition(center.x + 110.f, startY + gapY * 7 + 50.f);
+    cancelBtn->setPosition(center.x + 110.f, startY + gapY * 6 + 50.f);
     cancelBtn->setCallback([this]()
                            { requestStackPop(); });
 
@@ -123,9 +123,9 @@ void TransactionAddState::save()
         return;
     }
     mTransactionManager->add(Transaction(
-        "[Manual Entry]",
+        mTypeBox->getText(),
         std::stof(mAmountBox->getText()),
         mWalletBox->getText(),
-        mTypeBox->getText(),
         mDescBox->getText()));
+    requestStackPop();
 }

@@ -2,7 +2,6 @@
 #define STATISTICMANAGER_HPP
 
 #include <string>
-#include <vector>
 
 #include "core/TransactionManager/TransactionManager.hpp"
 #include "core/DynamicArray/DynamicArray.hpp"

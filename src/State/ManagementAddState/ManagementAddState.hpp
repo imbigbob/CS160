@@ -2,7 +2,6 @@
 #define _MANAGEMENT_ADD_STATE_HPP
 
 #include <memory>
-#include <vector>
 
 #include "../../Utility/Utility.hpp"
 #include "../../core/TypeManager/TypeManager.hpp"

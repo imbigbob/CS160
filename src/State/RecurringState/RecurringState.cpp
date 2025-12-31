@@ -74,12 +74,19 @@ RecurringState::RecurringState(StateStack &stack, Context context)
     mTableHeader.setPosition(TABLE_X, TABLE_Y);
     mTableHeader.setFillColor(sf::Color(230, 230, 230));
 
-    std::vector<std::string> headers = {
-        "No.", "Amount", "Wallet ID", "Type ID", "Description",
-        "Day", "Start Date", "End Date", "Actions"};
+    DynamicArray<std::string> headers;
+    headers.pushBack("No.");
+    headers.pushBack("Amount");
+    headers.pushBack("Wallet ID");
+    headers.pushBack("Type ID");
+    headers.pushBack("Description");
+    headers.pushBack("Day");
+    headers.pushBack("Start Date");
+    headers.pushBack("End Date");
+    headers.pushBack("Actions");
 
     float currentX = TABLE_X;
-    for (size_t i = 0; i < headers.size(); ++i)
+    for (size_t i = 0; i < headers.getSize(); ++i)
     {
         sf::Text text;
         text.setFont(context.fontHolder->get(Fonts::ID::Dosis));
@@ -88,7 +95,7 @@ RecurringState::RecurringState(StateStack &stack, Context context)
         text.setFillColor(sf::Color::Black);
         text.setPosition(currentX + 10.f, TABLE_Y + 8.f);
 
-        mHeaderTexts.push_back(text);
+        mHeaderTexts.pushBack(text);
         currentX += colWidth[i];
     }
     // --- VIEW SETUP (SCROLLING) ---
@@ -163,7 +170,7 @@ void RecurringState::reloadTable()
         rowRect.setSize(sf::Vector2f(colWidth[0] + colWidth[1] + colWidth[2] + colWidth[3] + colWidth[4] + colWidth[5] + colWidth[6] + colWidth[7] + colWidth[8], ROW_HEIGHT));
         rowRect.setPosition(tableX, currentY);
         rowRect.setFillColor((i % 2 == 0) ? sf::Color(250, 250, 250) : sf::Color(240, 240, 240));
-        mRowRects.push_back(rowRect);
+        mRowRects.pushBack(rowRect);
 
         // 2. Text Data (Same as your code)
         std::string orderStr = std::to_string(i + 1);
@@ -187,7 +194,7 @@ void RecurringState::reloadTable()
             t.setCharacterSize(25);
             t.setFillColor(sf::Color::Black);
             t.setPosition(cx + 10.f, currentY + 8.f);
-            mRowTexts.push_back(t);
+            mRowTexts.pushBack(t);
             cx += colWidth[col];
         }
 
@@ -199,13 +206,13 @@ void RecurringState::reloadTable()
         // Scale if texture is too big (optional, e.g., fit to 24x24)
         // editSprite.setScale(24.f / editTexture.getSize().x, 24.f / editTexture.getSize().y);
         editSprite.setPosition(cx + 10.f, currentY + 8.f);
-        mEditSprites.push_back(editSprite);
+        mEditSprites.pushBack(editSprite);
 
         // Setup Delete Icon (Position it after Edit icon)
         sf::Sprite delSprite(deleteTexture);
         // delSprite.setScale(24.f / deleteTexture.getSize().x, 24.f / deleteTexture.getSize().y);
         delSprite.setPosition(cx + 80.f, currentY + 8.f); // Offset x by 40-50px
-        mDeleteSprites.push_back(delSprite);
+        mDeleteSprites.pushBack(delSprite);
 
         currentY += ROW_HEIGHT;
     }
@@ -241,7 +248,7 @@ bool RecurringState::handleEvent(const sf::Event &event)
             sf::Vector2f mousePos = window.mapPixelToCoords(mousePosRaw, mTableView);
 
             // 3. Check collisions with Edit Buttons
-            for (size_t i = 0; i < mEditSprites.size(); ++i)
+            for (size_t i = 0; i < mEditSprites.getSize(); ++i)
             {
                 if (mEditSprites[i].getGlobalBounds().contains(mousePos))
                 {
@@ -251,7 +258,7 @@ bool RecurringState::handleEvent(const sf::Event &event)
             }
 
             // 4. Check collisions with Delete Buttons
-            for (size_t i = 0; i < mDeleteSprites.size(); ++i)
+            for (size_t i = 0; i < mDeleteSprites.getSize(); ++i)
             {
                 if (mDeleteSprites[i].getGlobalBounds().contains(mousePos))
                 {
@@ -294,20 +301,20 @@ void RecurringState::draw()
     window.setView(window.getDefaultView());
     window.draw(mBackgroundSprite);
     window.draw(mTableHeader);
-    for (auto &t : mHeaderTexts)
-        window.draw(t);
+    for (size_t i = 0; i < mHeaderTexts.getSize(); ++i)
+        window.draw(mHeaderTexts[i]);
 
     window.setView(mTableView);
 
-    for (auto &r : mRowRects)
-        window.draw(r);
-    for (auto &t : mRowTexts)
-        window.draw(t);
+    for (size_t i = 0; i < mRowRects.getSize(); ++i)
+        window.draw(mRowRects[i]);
+    for (size_t i = 0; i < mRowTexts.getSize(); ++i)
+        window.draw(mRowTexts[i]);
 
-    for (auto &s : mEditSprites)
-        window.draw(s);
-    for (auto &s : mDeleteSprites)
-        window.draw(s);
+    for (size_t i = 0; i < mEditSprites.getSize(); ++i)
+        window.draw(mEditSprites[i]);
+    for (size_t i = 0; i < mDeleteSprites.getSize(); ++i)
+        window.draw(mDeleteSprites[i]);
 
     // 3. Reset to Standard View
     window.setView(window.getDefaultView());

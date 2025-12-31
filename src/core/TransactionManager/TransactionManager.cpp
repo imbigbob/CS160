@@ -39,14 +39,12 @@ TransactionManager::TransactionManager(std::string filePath)
         if (obj.contains("id"))
             transaction.setId(obj["id"].get<std::string>());
         if (obj.contains("type"))
-            transaction.setName(obj["type"].get<std::string>());
+            transaction.setTypeId(obj["type"].get<std::string>());
         if (obj.contains("amount"))
             transaction.setAmount(obj["amount"].get<double>());
 
         if (obj.contains("walletId"))
             transaction.setWalletId(obj["walletId"].get<std::string>());
-        if (obj.contains("walletName"))
-            transaction.setWalletName(obj["walletName"].get<std::string>());
         if (obj.contains("description"))
             transaction.setDescription(obj["description"].get<std::string>());
         list.pushBack(transaction);
@@ -59,7 +57,16 @@ void TransactionManager::add(const Transaction &w)
     updateDB();
     return;
 }
-void TransactionManager::remove(int id) {}
+void TransactionManager::remove(int id)
+{
+    if (id < 0 || id >= list.getSize())
+    {
+        std::cerr << "Invalid index for removal: " << id << std::endl;
+        return;
+    }
+    list.removeAt(id);
+    updateDB();
+}
 
 double TransactionManager::getTotalBalance()
 {
@@ -84,11 +91,10 @@ void TransactionManager::updateDB()
         json obj;
         obj["date"] = transaction.getDate();
         obj["id"] = transaction.getId();
-        obj["type"] = transaction.getName();
+        obj["type"] = transaction.getTypeId();
         obj["amount"] = transaction.getAmount();
 
         obj["walletId"] = transaction.getWalletId();
-        obj["walletName"] = ""; // Placeholder, as Wallet name is not in Income
         obj["description"] = transaction.getDescription();
 
         root.push_back(obj);
@@ -172,7 +178,7 @@ double TransactionManager::transactionBreakdownByType(DynamicArray<int> year, co
             // 3. Check if the date has enough characters and matches the year
             // substr(0, 4) extracts the first 4 chars (The Year)
             if (transactionDate.length() >= 4 && transactionDate.substr(0, 4) == targetYearStr &&
-                list[j].getName() == type)
+                list[j].getTypeId() == type)
             {
                 totalTransaction += list[j].getAmount();
             }
@@ -180,4 +186,24 @@ double TransactionManager::transactionBreakdownByType(DynamicArray<int> year, co
     }
 
     return totalTransaction;
+}
+
+Transaction *TransactionManager::getValue(int index)
+{
+    if (index < 0 || index >= list.getSize())
+    {
+        return nullptr;
+    }
+    return &list[index];
+}
+
+void TransactionManager::editTransaction(int index, const Transaction &t)
+{
+    if (index < 0 || index >= list.getSize())
+    {
+        std::cerr << "Invalid index for editing: " << index << std::endl;
+        return;
+    }
+    list[index] = t;
+    updateDB();
 }

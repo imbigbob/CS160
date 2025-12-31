@@ -1,6 +1,8 @@
 #include <cassert>
 #include <exception>
 
+#include "../core/DynamicArray/DynamicArray.hpp"
+
 template <typename Resource, typename Identifier>
 void ResourceHolder<Resource, Identifier>::load(
     Identifier id, const std::string &filename)
@@ -39,7 +41,7 @@ const Resource &ResourceHolder<Resource, Identifier>::get(Identifier id) const
 
 template <typename Resource, typename Identifier>
 Identifier ResourceHolder<Resource, Identifier>::getSharedID(
-    Identifier id, const std::vector<Identifier> &possibleIDs) const
+    Identifier id, const DynamicArray<Identifier> &possibleIDs) const
 {
     auto found = mResourceMap.find(id);
 

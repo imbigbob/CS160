@@ -69,19 +69,24 @@ ManagementState::ManagementState(StateStack &stack, Context context)
     // Column Widths: [0]=No., [1]=Name, [2]=ID (Optional)
     float colWidth[] = {
         80.f,
+        150.f,
         300.f,
         200.f};
 
     mTableHeader.setSize(
-        sf::Vector2f(colWidth[0] + colWidth[1] + colWidth[2], HEADER_HEIGHT));
+        sf::Vector2f(colWidth[0] + colWidth[1] + colWidth[2] + colWidth[3], HEADER_HEIGHT));
     mTableHeader.setPosition(TABLE_X, TABLE_Y);
     mTableHeader.setFillColor(sf::Color(230, 230, 230));
 
     sf::Font &font = context.fontHolder->get(Fonts::ID::Dosis);
-    std::vector<std::string> headers = {"No.", "Name", ""};
+    DynamicArray<std::string> headers;
+    headers.pushBack("No.");
+    headers.pushBack("ID");
+    headers.pushBack("Name");
+    headers.pushBack("");
 
     float currentX = TABLE_X;
-    for (int i = 0; i < headers.size(); i++)
+    for (int i = 0; i < headers.getSize(); i++)
     {
         sf::Text text;
         text.setFont(font);
@@ -91,7 +96,7 @@ ManagementState::ManagementState(StateStack &stack, Context context)
 
         // Center text vertically in header
         text.setPosition(currentX + 10.f, TABLE_Y + 8.f);
-        mHeaderTexts.push_back(text);
+        mHeaderTexts.pushBack(text);
 
         currentX += colWidth[i];
     }
@@ -129,10 +134,6 @@ void ManagementState::handleAdd()
 }
 void ManagementState::reloadTable()
 {
-    for (int i = 0; i < incomeTypeManager.getAllTypes().getSize(); i++)
-    {
-        std::cout << "Income Type " << i << ": " << incomeTypeManager.getAllTypes()[i].getName() << std::endl;
-    }
     mRowRects.clear();
     mRowTexts.clear();
     // Clear old icons
@@ -154,7 +155,7 @@ void ManagementState::reloadTable()
     auto &types = manager->getAllTypes();
 
     float tableX = TABLE_X;
-    float colWidth[] = {80.f, 300.f, 200.f}; // Added 3rd col width logic
+    float colWidth[] = {80.f, 150.f, 300.f, 200.f}; // Added 3rd col width logic
     float currentY = TABLE_Y + HEADER_HEIGHT;
 
     sf::Font &font = getContext().fontHolder->get(Fonts::ID::Dosis);
@@ -168,18 +169,21 @@ void ManagementState::reloadTable()
     {
         // 1. Background Row (Same as your code)
         sf::RectangleShape rowRect;
-        rowRect.setSize(sf::Vector2f(colWidth[0] + colWidth[1] + colWidth[2], ROW_HEIGHT));
+        rowRect.setSize(sf::Vector2f(colWidth[0] + colWidth[1] + colWidth[2] + colWidth[3], ROW_HEIGHT));
         rowRect.setPosition(tableX, currentY);
         rowRect.setFillColor((i % 2 == 0) ? sf::Color(250, 250, 250) : sf::Color(240, 240, 240));
-        mRowRects.push_back(rowRect);
+        mRowRects.pushBack(rowRect);
 
         // 2. Text Data (Same as your code)
         std::string orderStr = std::to_string(i + 1);
+        std::string idStr = types[i].getId();
         std::string nameStr = types[i].getName();
-        std::vector<std::string> rowData = {orderStr, nameStr};
-
+        DynamicArray<std::string> rowData;
+        rowData.pushBack(orderStr);
+        rowData.pushBack(idStr);
+        rowData.pushBack(nameStr);
         float cx = tableX;
-        for (int col = 0; col < rowData.size(); col++)
+        for (int col = 0; col < rowData.getSize(); col++)
         {
             sf::Text t;
             t.setFont(font);
@@ -187,7 +191,7 @@ void ManagementState::reloadTable()
             t.setCharacterSize(25);
             t.setFillColor(sf::Color::Black);
             t.setPosition(cx + 10.f, currentY + 8.f);
-            mRowTexts.push_back(t);
+            mRowTexts.pushBack(t);
             cx += colWidth[col];
         }
 
@@ -199,13 +203,13 @@ void ManagementState::reloadTable()
         // Scale if texture is too big (optional, e.g., fit to 24x24)
         // editSprite.setScale(24.f / editTexture.getSize().x, 24.f / editTexture.getSize().y);
         editSprite.setPosition(cx + 10.f, currentY + 8.f);
-        mEditSprites.push_back(editSprite);
+        mEditSprites.pushBack(editSprite);
 
         // Setup Delete Icon (Position it after Edit icon)
         sf::Sprite delSprite(deleteTexture);
         // delSprite.setScale(24.f / deleteTexture.getSize().x, 24.f / deleteTexture.getSize().y);
         delSprite.setPosition(cx + 80.f, currentY + 8.f); // Offset x by 40-50px
-        mDeleteSprites.push_back(delSprite);
+        mDeleteSprites.pushBack(delSprite);
 
         currentY += ROW_HEIGHT;
     }
@@ -242,7 +246,7 @@ bool ManagementState::handleEvent(const sf::Event &event)
             sf::Vector2f mousePos = window.mapPixelToCoords(mousePosRaw, mTableView);
 
             // 3. Check collisions with Edit Buttons
-            for (size_t i = 0; i < mEditSprites.size(); ++i)
+            for (size_t i = 0; i < mEditSprites.getSize(); ++i)
             {
                 if (mEditSprites[i].getGlobalBounds().contains(mousePos))
                 {
@@ -252,7 +256,7 @@ bool ManagementState::handleEvent(const sf::Event &event)
             }
 
             // 4. Check collisions with Delete Buttons
-            for (size_t i = 0; i < mDeleteSprites.size(); ++i)
+            for (size_t i = 0; i < mDeleteSprites.getSize(); ++i)
             {
                 if (mDeleteSprites[i].getGlobalBounds().contains(mousePos))
                 {
@@ -296,22 +300,22 @@ void ManagementState::draw()
     window.setView(window.getDefaultView());
     window.draw(mBackgroundSprite);
     window.draw(mTableHeader);
-    for (auto &t : mHeaderTexts)
-        window.draw(t);
+    for (int i = 0; i < mHeaderTexts.getSize(); i++)
+        window.draw(mHeaderTexts[i]);
 
     // 2. Table View (Rows)
     window.setView(mTableView);
 
-    for (auto &r : mRowRects)
-        window.draw(r);
-    for (auto &t : mRowTexts)
-        window.draw(t);
+    for (int i = 0; i < mRowRects.getSize(); i++)
+        window.draw(mRowRects[i]);
+    for (int i = 0; i < mRowTexts.getSize(); i++)
+        window.draw(mRowTexts[i]);
 
     // --- DRAW ICONS ---
-    for (auto &s : mEditSprites)
-        window.draw(s);
-    for (auto &s : mDeleteSprites)
-        window.draw(s);
+    for (int i = 0; i < mEditSprites.getSize(); i++)
+        window.draw(mEditSprites[i]);
+    for (int i = 0; i < mDeleteSprites.getSize(); i++)
+        window.draw(mDeleteSprites[i]);
 
     // 3. Reset to Standard View
     window.setView(window.getDefaultView());

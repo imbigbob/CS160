@@ -118,7 +118,6 @@ bool RecurringEditState::handleEvent(const sf::Event &event)
     if (event.type == sf::Event::KeyPressed && event.key.code == sf::Keyboard::Enter)
     {
         save();
-        requestStackPop();
     }
 
     return false;

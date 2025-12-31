@@ -1,6 +1,9 @@
 #ifndef DYNAMIC_ARRAY_HPP
 #define DYNAMIC_ARRAY_HPP
 
+#include <utility> // std::move
+#include <cassert>
+
 template <typename T>
 class DynamicArray
 {
@@ -9,148 +12,157 @@ private:
     int size;
     int capacity;
 
-    void resize(int newCapacity);
+    void resize(int newCapacity)
+    {
+        T *newData = new T[newCapacity];
+
+        // MOVE elements (like std::vector does)
+        for (int i = 0; i < size; ++i)
+            newData[i] = std::move(data[i]);
+
+        delete[] data;
+        data = newData;
+        capacity = newCapacity;
+    }
 
 public:
-    DynamicArray();
-    ~DynamicArray();
-    DynamicArray(const DynamicArray &other);
-    DynamicArray &operator=(const DynamicArray &other);
-    int getValue(int index) const;
-    void setValue(int index, const T &value);
-    void pushBack(const T &value);
-    void removeAt(int index);
-    T &operator[](int index);
-    const T &operator[](int index) const;
-    int getSize() const;
-    bool empty() const;
+    // ===== Constructors / Destructor =====
+
+    DynamicArray()
+        : data(new T[2]), size(0), capacity(2) {}
+
+    ~DynamicArray()
+    {
+        delete[] data;
+    }
+
+    // COPY constructor (only works if T is copyable)
+    DynamicArray(const DynamicArray &other)
+        : data(new T[other.capacity]),
+          size(other.size),
+          capacity(other.capacity)
+    {
+        for (int i = 0; i < size; ++i)
+            data[i] = other.data[i];
+    }
+
+    // COPY assignment
+    DynamicArray &operator=(const DynamicArray &other)
+    {
+        if (this != &other)
+        {
+            T *newData = new T[other.capacity];
+
+            for (int i = 0; i < other.size; ++i)
+                newData[i] = other.data[i];
+
+            delete[] data;
+            data = newData;
+            size = other.size;
+            capacity = other.capacity;
+        }
+        return *this;
+    }
+
+    // MOVE constructor
+    DynamicArray(DynamicArray &&other)
+        : data(other.data),
+          size(other.size),
+          capacity(other.capacity)
+    {
+        other.data = nullptr;
+        other.size = 0;
+        other.capacity = 0;
+    }
+
+    // MOVE assignment
+    DynamicArray &operator=(DynamicArray &&other)
+    {
+        if (this != &other)
+        {
+            delete[] data;
+
+            data = other.data;
+            size = other.size;
+            capacity = other.capacity;
+
+            other.data = nullptr;
+            other.size = 0;
+            other.capacity = 0;
+        }
+        return *this;
+    }
+
+    // ===== Capacity =====
+
+    int getSize() const { return size; }
+    bool empty() const { return size == 0; }
+
     void clear()
     {
         delete[] data;
-        size = 0;
         capacity = 2;
-    };
-};
-template <typename T>
-void DynamicArray<T>::pushBack(const T &value)
-{
-    if (size >= capacity)
-    {
-        resize(capacity * 2);
-    }
-    data[size] = value;
-    size++;
-    return;
-}
-
-template <typename T>
-void DynamicArray<T>::resize(int newCapacity)
-{
-    T *newData = new T[newCapacity];
-    for (int i = 0; i < size; i++)
-    {
-        newData[i] = data[i]; // copy
-    }
-    delete[] data;
-    data = newData;
-    capacity = newCapacity;
-}
-
-template <typename T>
-DynamicArray<T>::DynamicArray()
-{
-    size = 0;
-    capacity = 2; // small but expandable
-    data = new T[capacity];
-}
-
-template <typename T>
-DynamicArray<T>::~DynamicArray()
-{
-    delete[] data;
-}
-template <typename T>
-DynamicArray<T>::DynamicArray(const DynamicArray &other)
-{
-    size = other.size;
-    capacity = other.capacity;
-    data = new T[capacity];
-    for (int i = 0; i < size; i++)
-    {
-        data[i] = other.data[i];
-    }
-}
-
-// Assignment operator
-template <typename T>
-DynamicArray<T> &DynamicArray<T>::operator=(const DynamicArray &other)
-{
-    if (this != &other)
-    {
-        delete[] data;
-
-        size = other.size;
-        capacity = other.capacity;
+        size = 0;
         data = new T[capacity];
-
-        for (int i = 0; i < size; i++)
-        {
-            data[i] = other.data[i];
-        }
     }
-    return *this;
-}
 
-template <typename T>
-void DynamicArray<T>::removeAt(int index)
-{
-    if (index < 0 || index >= size)
-        return;
+    // ===== Element access =====
 
-    for (int i = index; i < size - 1; i++)
+    T &operator[](int index)
     {
-        data[i] = data[i + 1];
+        assert(index >= 0 && index < size);
+        return data[index];
     }
-    size--;
-}
 
-template <typename T>
-T &DynamicArray<T>::operator[](int index)
-{
-    // No bounds error printing (cleaner)
-    return data[index];
-}
+    const T &operator[](int index) const
+    {
+        assert(index >= 0 && index < size);
+        return data[index];
+    }
 
-template <typename T>
-const T &DynamicArray<T>::operator[](int index) const
-{
-    // Optional: Add debug check
-    // assert(index >= 0 && index < this->size);
-    return data[index];
-}
+    // ===== Modifiers =====
 
-template <typename T>
-bool DynamicArray<T>::empty() const
-{
-    return size == 0;
-}
+    // Pass-by-value enables move OR copy automatically
+    void pushBack(T value)
+    {
+        if (size >= capacity)
+            resize(capacity * 2);
 
-template <typename T>
-int DynamicArray<T>::getValue(int index) const
-{
-    return 0;
-}
+        data[size++] = std::move(value);
+    }
 
-template <typename T>
-int DynamicArray<T>::getSize() const
-{
-    return size;
-}
-template <typename T>
-void DynamicArray<T>::setValue(int index, const T &value)
-{
-    if (index < 0 || index >= size)
-        return;
-    data[index] = value;
-}
+    void popBack()
+    {
+        if (size > 0)
+            --size;
+    }
+
+    void removeAt(int index)
+    {
+        if (index < 0 || index >= size)
+            return;
+
+        for (int i = index; i < size - 1; ++i)
+            data[i] = std::move(data[i + 1]);
+
+        --size;
+    }
+
+    void setValue(int index, T value)
+    {
+        if (index < 0 || index >= size)
+            return;
+
+        data[index] = std::move(value);
+    }
+
+    void getValue(int index) const
+    {
+        if (index < 0 || index >= size)
+            return;
+
+        return data[index];
+    }
+};
+
 #endif

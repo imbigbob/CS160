@@ -1,16 +1,21 @@
 #include "Program.hpp"
 
 #include "../Global/Global.hpp"
-#include "../State/ManagementState/ManagementState.hpp"
 #include "../State/MenuState/MenuState.hpp"
 #include "../State/RecurringState/RecurringState.hpp"
 #include "../State/RecurringEditState/RecurringEditState.hpp"
 #include "../State/RecurringAddState/RecurringAddState.hpp"
+
 #include "../State/StatisticsState/StatisticsState.hpp"
+
 #include "../State/TransactionState/TransactionState.hpp"
 #include "../State/TransactionAddState/TransactionAddState.hpp"
+#include "../State/TransactionEditState/TransactionEditState.hpp"
+
 #include "../State/ManagementEditState/ManagementEditState.hpp"
 #include "../State/ManagementAddState/ManagementAddState.hpp"
+#include "../State/ManagementState/ManagementState.hpp"
+
 #include "../State/WarningState/WarningState.hpp"
 Program::Program()
     : mWindow(
@@ -102,6 +107,8 @@ void Program::registerStates()
     mStateStack.registerState<MenuState>(States::ID::Menu);
     mStateStack.registerState<TransactionState>(States::ID::Transaction);
     mStateStack.registerState<TransactionAddState>(States::ID::TransactionAdd);
+    mStateStack.registerState<TransactionEditState>(States::ID::TransactionEdit);
+
     mStateStack.registerState<RecurringState>(States::ID::Recurring);
     mStateStack.registerState<RecurringEditState>(States::ID::RecurringEdit);
     mStateStack.registerState<RecurringAddState>(States::ID::RecurringAdd);

@@ -185,8 +185,8 @@ void RecurringManager::processRecurring()
             continue;
 
         // Income profile
-        Transaction inc("[Auto Rec]", rule.amount,
-                        rule.walletId, "", rule.description);
+        Transaction inc(rule.type, rule.amount,
+                        rule.walletId, rule.description + "[Auto Rec]");
         incomeManagers.add(inc); // from IncomeManager
         rule.lastAppliedYM = currentMonth;
         incomeProcessed = true;
@@ -207,8 +207,8 @@ void RecurringManager::processRecurring()
             continue;
 
         // Expense profile
-        Transaction exp("[Auto Rec]", rule.amount,
-                        rule.walletId, "", rule.description);
+        Transaction exp(rule.type, rule.amount,
+                        rule.walletId, rule.description + "[Auto Rec]");
 
         expenseManagers.add(exp); // from ExpenseManager
         expenseProcessed = true;

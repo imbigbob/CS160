@@ -2,7 +2,6 @@
 #define TRANSACTION_ADD_STATE_HPP
 
 #include <memory>
-#include <vector>
 
 #include "../../Utility/Utility.hpp"
 #include "../GUI/Button/Button.hpp"

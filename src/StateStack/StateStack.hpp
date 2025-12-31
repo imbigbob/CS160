@@ -4,21 +4,24 @@
 #include <functional>
 
 #include "../State/State.hpp"
+#include <vector>
 
-class StateStack : private sf::NonCopyable {
-   public:
-    enum Action {
+class StateStack : private sf::NonCopyable
+{
+public:
+    enum Action
+    {
         Push,
         Pop,
         Clear,
     };
 
-    explicit StateStack(const State::Context& context);
+    explicit StateStack(const State::Context &context);
 
     template <typename T, typename... Params>
     void registerState(States::ID stateID, Params... parameters);
 
-    void handleEvent(const sf::Event& event);
+    void handleEvent(const sf::Event &event);
     void update(sf::Time deltaTime);
     void draw();
 
@@ -28,11 +31,11 @@ class StateStack : private sf::NonCopyable {
 
     bool isEmpty() const;
 
-   private:
-    struct PendingChange {
+private:
+    struct PendingChange
+    {
         explicit PendingChange(
-            Action action, States::ID stateID = States::ID::None
-        );
+            Action action, States::ID stateID = States::ID::None);
 
         Action action;
         States::ID stateID;
@@ -49,8 +52,10 @@ class StateStack : private sf::NonCopyable {
 };
 
 template <typename T, typename... Params>
-void StateStack::registerState(States::ID stateID, Params... parameters) {
-    mFactories[stateID] = [this, parameters...]() {
+void StateStack::registerState(States::ID stateID, Params... parameters)
+{
+    mFactories[stateID] = [this, parameters...]()
+    {
         return State::Ptr(new T(*this, mContext, parameters...));
     };
 }

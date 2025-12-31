@@ -1,67 +1,84 @@
 #include "Container.hpp"
 
-namespace GUI {
+namespace GUI
+{
 
-Container::Container(bool isDirectionButton)
-    : mSelectedChild(-1), isDirectionButton(isDirectionButton) {}
+    Container::Container(bool isDirectionButton)
+        : mSelectedChild(-1), isDirectionButton(isDirectionButton) {}
 
-void Container::addComponent(Component::Ptr component) {
-    mChildren.push_back(component);
+    void Container::addComponent(Component::Ptr component)
+    {
+        mChildren.pushBack(component);
 
-    if (!hasSelection() && component->isSelectable()) {
-        select(mChildren.size() - 1);
+        if (!hasSelection() && component->isSelectable())
+        {
+            select(mChildren.getSize() - 1);
+        }
     }
-}
 
-bool Container::isSelectable() const { return false; }
+    bool Container::isSelectable() const { return false; }
 
-void Container::handleMouseEvent(
-    const sf::Event& event, const sf::RenderWindow& window
-) {
-    if (event.type == sf::Event::MouseMoved) {
-        sf::Vector2i mousePosition = sf::Mouse::getPosition(window);
+    void Container::handleMouseEvent(
+        const sf::Event &event, const sf::RenderWindow &window)
+    {
+        if (event.type == sf::Event::MouseMoved)
+        {
+            sf::Vector2i mousePosition = sf::Mouse::getPosition(window);
 
-        for (int i = 0; i < mChildren.size(); i++) {
-            if (!mChildren[i]->isSelectable()) {
-                continue;
-            }
-
-            sf::FloatRect bounds = mChildren[i]->getGlobalBounds();
-
-            if (bounds.contains(mousePosition.x, mousePosition.y)) {
-                select(i);
-            }
-        }
-    } else if (event.type == sf::Event::MouseButtonPressed) {
-        if (!hasSelection()) {
-            return;
-        }
-
-        sf::Vector2i mousePosition = sf::Mouse::getPosition(window);
-
-        for (int i = 0; i < mChildren.size(); i++) {
-            sf::FloatRect bounds = mChildren[i]->getGlobalBounds();
-
-            if (bounds.contains(mousePosition.x, mousePosition.y)) {
-                if (!mChildren[i]->isSelectable()) {
+            for (int i = 0; i < mChildren.getSize(); i++)
+            {
+                if (!mChildren[i]->isSelectable())
+                {
                     continue;
                 }
 
-                mChildren[mSelectedChild]->deactivate();
-                mChildren[i]->activate();
-                mSelectedChild = i;
+                sf::FloatRect bounds = mChildren[i]->getGlobalBounds();
+
+                if (bounds.contains(mousePosition.x, mousePosition.y))
+                {
+                    select(i);
+                }
+            }
+        }
+        else if (event.type == sf::Event::MouseButtonPressed)
+        {
+            if (!hasSelection())
+            {
+                return;
+            }
+
+            sf::Vector2i mousePosition = sf::Mouse::getPosition(window);
+
+            for (int i = 0; i < mChildren.getSize(); i++)
+            {
+                sf::FloatRect bounds = mChildren[i]->getGlobalBounds();
+
+                if (bounds.contains(mousePosition.x, mousePosition.y))
+                {
+                    if (!mChildren[i]->isSelectable())
+                    {
+                        continue;
+                    }
+
+                    mChildren[mSelectedChild]->deactivate();
+                    mChildren[i]->activate();
+                    mSelectedChild = i;
+                }
             }
         }
     }
-}
 
-void Container::handleEvent(
-    const sf::Event& event, const sf::RenderWindow& window
-) {
-    if (hasSelection() && mChildren[mSelectedChild]->isActive()) {
-        mChildren[mSelectedChild]->handleEvent(event, window);
-    } else if (event.type == sf::Event::KeyReleased) {
-        switch (event.key.code) {
+    void Container::handleEvent(
+        const sf::Event &event, const sf::RenderWindow &window)
+    {
+        if (hasSelection() && mChildren[mSelectedChild]->isActive())
+        {
+            mChildren[mSelectedChild]->handleEvent(event, window);
+        }
+        else if (event.type == sf::Event::KeyReleased)
+        {
+            switch (event.key.code)
+            {
             case sf::Keyboard::W:
             case sf::Keyboard::Up:
                 selectPrevious();
@@ -74,64 +91,78 @@ void Container::handleEvent(
 
             case sf::Keyboard::Enter:
             case sf::Keyboard::Space:
-                if (hasSelection() && !isDirectionButton) {
+                if (hasSelection() && !isDirectionButton)
+                {
                     mChildren[mSelectedChild]->activate();
                 }
 
                 break;
+            }
         }
-    } else {
-        handleMouseEvent(event, window);
+        else
+        {
+            handleMouseEvent(event, window);
+        }
     }
-}
 
-void Container::draw(sf::RenderTarget& target, sf::RenderStates states) const {
-    states.transform *= getTransform();
+    void Container::draw(sf::RenderTarget &target, sf::RenderStates states) const
+    {
+        states.transform *= getTransform();
 
-    for (const Component::Ptr& child : mChildren) {
-        target.draw(*child, states);
+        for (int i = 0; i < mChildren.getSize(); i++)
+        {
+            target.draw(*mChildren[i], states);
+        }
     }
-}
 
-bool Container::hasSelection() const { return mSelectedChild >= 0; }
+    bool Container::hasSelection() const { return mSelectedChild >= 0; }
 
-void Container::select(int index) {
-    if (mChildren[index]->isSelectable()) {
-        if (hasSelection()) {
-            mChildren[mSelectedChild]->deselect();
+    void Container::select(int index)
+    {
+        if (mChildren[index]->isSelectable())
+        {
+            if (hasSelection())
+            {
+                mChildren[mSelectedChild]->deselect();
+            }
+
+            mChildren[index]->select();
+            mSelectedChild = index;
+        }
+    }
+
+    void Container::selectNext()
+    {
+        if (!hasSelection())
+        {
+            return;
         }
 
-        mChildren[index]->select();
-        mSelectedChild = index;
-    }
-}
+        int next = mSelectedChild;
 
-void Container::selectNext() {
-    if (!hasSelection()) {
-        return;
-    }
+        do
+        {
+            next = (next + 1) % mChildren.getSize();
+        } while (!mChildren[next]->isSelectable());
 
-    int next = mSelectedChild;
-
-    do {
-        next = (next + 1) % mChildren.size();
-    } while (!mChildren[next]->isSelectable());
-
-    select(next);
-}
-
-void Container::selectPrevious() {
-    if (!hasSelection()) {
-        return;
+        select(next);
     }
 
-    int prev = mSelectedChild;
+    void Container::selectPrevious()
+    {
+        if (!hasSelection())
+        {
+            return;
+        }
 
-    do {
-        prev = (prev + mChildren.size() - 1) % mChildren.size();
-    } while (!mChildren[prev]->isSelectable());
+        int prev = mSelectedChild;
 
-    select(prev);
-}
+        do
+        {
+            prev = (prev + mChildren.getSize() - 1) % mChildren.getSize();
+        } while (!mChildren[prev]->isSelectable());
 
-}  // namespace GUI
+        select(prev);
+    }
+
+} // namespace GUI

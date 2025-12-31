@@ -20,6 +20,8 @@ public:
     double getBalanceInTimeRange(std::string start, std::string end);
     double anualTransactionOverview(DynamicArray<int> year);
     double transactionBreakdownByType(DynamicArray<int> year, const std::string &type);
+    Transaction *getValue(int index);
+    void editTransaction(int index, const Transaction &t);
 };
 
 #endif
